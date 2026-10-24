@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reza Anvaripour — Molecular Genetics & Computational Biology</title>
-  <meta name="description" content="Independent researcher in molecular genetics, bioinformatics, and clinical genomics. Developer of GenomicsOps." />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -13,7 +12,7 @@
       --bg: #060a10; --bg-elevated: #0b111a; --surface: #101824; --border: #1e2a3a;
       --text-primary: #e8edf5; --text-secondary: #8b9bb4; --text-muted: #5a6b82;
       --accent: #3ee8b5; --accent-dim: #1a8f6d; --accent-glow: rgba(62, 232, 181, 0.15);
-      --helix-a: #3ee8b5; --helix-b: #4a9eff; --danger: #ff5c7a;
+      --helix-a: #1a8f6d; --helix-b: #2a4a6a; --danger: #ff5c7a;
       --font-display: 'DM Serif Display', Georgia, serif;
       --font-body: 'Inter', system-ui, -apple-system, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -22,89 +21,101 @@
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--accent-dim) var(--bg); }
     body { background: var(--bg); color: var(--text-primary); font-family: var(--font-body); font-weight: 400; line-height: 1.65; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-    #dna-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; opacity: 0.7; }
+    
+    /* Toned down, darker DNA */
+    #dna-canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; opacity: 0.25; }
     .page-wrap { position: relative; z-index: 1; }
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 1.2rem 2rem; display: flex; justify-content: space-between; align-items: center; background: rgba(6, 10, 16, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-bottom: 1px solid transparent; transition: border-color 0.3s, background 0.3s; }
-    nav.scrolled { border-bottom-color: var(--border); background: rgba(6, 10, 16, 0.85); }
-    .nav-logo { font-family: var(--font-display); font-size: 1.15rem; color: var(--text-primary); text-decoration: none; letter-spacing: 0.02em; }
+    
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 1.2rem 2rem; display: flex; justify-content: space-between; align-items: center; background: rgba(6, 10, 16, 0.7); backdrop-filter: blur(16px); border-bottom: 1px solid transparent; transition: border-color 0.3s, background 0.3s; }
+    nav.scrolled { border-bottom-color: var(--border); background: rgba(6, 10, 16, 0.9); }
+    .nav-logo { font-family: var(--font-display); font-size: 1.15rem; color: var(--text-primary); text-decoration: none; }
     .nav-logo span { color: var(--accent); }
-    .nav-links { display: flex; gap: 1.8rem; list-style: none; align-items: center; }
-    .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.03em; transition: color 0.25s; }
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.25s; }
     .nav-links a:hover { color: var(--accent); }
-    .hero { min-height: 100vh; display: flex; align-items: center; padding: 6rem 2rem 4rem; position: relative; }
+    
+    .hero { min-height: 100vh; display: flex; align-items: center; padding: 6rem 2rem 4rem; }
     .hero-inner { max-width: var(--max-w); margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
-    .hero-text .eyebrow { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.6rem; }
+    .eyebrow { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.6rem; }
     .eyebrow::before { content: ''; width: 24px; height: 1px; background: var(--accent); }
-    .hero-text h1 { font-family: var(--font-display); font-size: clamp(2.8rem, 5.5vw, 4.5rem); line-height: 1.05; font-weight: 400; margin-bottom: 1.5rem; letter-spacing: -0.01em; }
+    .hero-text h1 { font-family: var(--font-display); font-size: clamp(2.8rem, 5.5vw, 4.2rem); line-height: 1.05; margin-bottom: 1.5rem; }
     .hero-text h1 em { font-style: italic; color: var(--accent); }
     .hero-text p { color: var(--text-secondary); font-size: 1.05rem; max-width: 480px; margin-bottom: 2rem; line-height: 1.75; }
+    .hero-typing { font-family: var(--font-mono); font-size: 0.85rem; color: var(--accent-dim); margin-bottom: 2rem; height: 20px; }
+    
     .hero-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2.2rem; }
-    .tag { font-family: var(--font-mono); font-size: 0.72rem; padding: 0.35rem 0.75rem; border: 1px solid var(--border); border-radius: 100px; color: var(--text-secondary); background: rgba(16, 24, 36, 0.5); letter-spacing: 0.02em; transition: border-color 0.25s, color 0.25s; }
-    .tag:hover { border-color: var(--accent-dim); color: var(--accent); }
-    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.6rem; border-radius: 8px; font-size: 0.88rem; font-weight: 600; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s, background 0.2s; cursor: pointer; border: none; font-family: var(--font-body); }
+    .tag { font-family: var(--font-mono); font-size: 0.72rem; padding: 0.35rem 0.75rem; border: 1px solid var(--border); border-radius: 100px; color: var(--text-secondary); background: rgba(16, 24, 36, 0.5); transition: all 0.25s; }
+    .tag:hover { border-color: var(--accent-dim); color: var(--accent); transform: translateY(-2px); }
+    
+    .btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.8rem 1.6rem; border-radius: 8px; font-size: 0.88rem; font-weight: 600; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none; }
     .btn-primary { background: var(--accent); color: #04120c; }
     .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(62, 232, 181, 0.3); }
     .btn-ghost { background: transparent; color: var(--text-primary); border: 1px solid var(--border); }
     .btn-ghost:hover { border-color: var(--accent-dim); color: var(--accent); }
-    .hero-visual { position: relative; display: flex; justify-content: center; align-items: center; }
-    .lab-stack { position: relative; width: 100%; max-width: 420px; aspect-ratio: 3 / 4; }
-    .lab-stack img { position: absolute; border-radius: var(--radius); object-fit: cover; border: 1px solid var(--border); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
-    .lab-stack img:nth-child(1) { width: 70%; top: 0; left: 0; z-index: 3; transform: rotate(-3deg); }
-    .lab-stack img:nth-child(2) { width: 65%; bottom: 0; right: 0; z-index: 2; transform: rotate(4deg); }
-    .lab-stack img:nth-child(3) { width: 55%; top: 30%; right: 10%; z-index: 1; transform: rotate(-6deg); opacity: 0.85; }
-    .lab-stack:hover img:nth-child(1) { transform: rotate(-1deg) translateY(-8px); }
-    .lab-stack:hover img:nth-child(2) { transform: rotate(2deg) translateY(6px); }
-    .lab-stack:hover img:nth-child(3) { transform: rotate(-3deg) translateX(8px); }
-    section { padding: 7rem 2rem; position: relative; }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+    
+    /* Responsive Image Grid instead of absolute stacking */
+    .hero-visual { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .hero-visual img { width: 100%; height: 100%; object-fit: cover; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5); transition: transform 0.4s, z-index 0.4s; }
+    .hero-visual img:hover { transform: scale(1.05); z-index: 10; position: relative; }
+    .hero-visual img:nth-child(1) { grid-row: span 2; aspect-ratio: 3/4; }
+    .hero-visual img:nth-child(2) { aspect-ratio: 4/3; }
+    .hero-visual img:nth-child(3) { aspect-ratio: 4/3; }
+    
+    section { padding: 6rem 2rem; }
     .section-inner { max-width: var(--max-w); margin: 0 auto; }
     .section-label { font-family: var(--font-mono); font-size: 0.72rem; color: var(--accent); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.6rem; }
     .section-label::before { content: ''; width: 20px; height: 1px; background: var(--accent); }
-    .section-title { font-family: var(--font-display); font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 400; margin-bottom: 1rem; letter-spacing: -0.01em; }
+    .section-title { font-family: var(--font-display); font-size: clamp(2rem, 3.5vw, 2.8rem); font-weight: 400; margin-bottom: 1rem; }
     .section-desc { color: var(--text-secondary); max-width: 600px; margin-bottom: 3.5rem; font-size: 0.98rem; }
-    .research-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 1.5rem; }
-    .research-card { background: linear-gradient(160deg, var(--bg-elevated), var(--surface)); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; position: relative; overflow: hidden; transition: border-color 0.3s, transform 0.3s; }
-    .research-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), var(--helix-b), transparent); opacity: 0; transition: opacity 0.3s; }
+    
+    .research-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .research-card { background: linear-gradient(160deg, var(--bg-elevated), var(--surface)); border: 1px solid var(--border); border-radius: var(--radius); padding: 2rem; position: relative; overflow: hidden; transition: transform 0.3s, border-color 0.3s; }
     .research-card:hover { border-color: var(--accent-dim); transform: translateY(-4px); }
-    .research-card:hover::before { opacity: 1; }
-    .research-card .card-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--accent-glow); display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem; color: var(--accent); }
-    .research-card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.7rem; line-height: 1.4; }
-    .research-card p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; margin-bottom: 1.2rem; }
-    .research-card .card-meta { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .research-card h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 0.7rem; }
+    .research-card p { color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; }
+    .card-meta { font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-muted); margin-top: 1rem; display: flex; gap: 0.6rem; flex-wrap: wrap; }
     .card-meta span { padding: 0.25rem 0.55rem; border: 1px solid var(--border); border-radius: 4px; }
-    .pub-list { display: flex; flex-direction: column; gap: 1rem; }
-    .pub-item { display: grid; grid-template-columns: auto 1fr auto; gap: 1.5rem; align-items: start; padding: 1.6rem 0; border-bottom: 1px solid var(--border); transition: padding-left 0.3s, border-color 0.3s; }
-    .pub-item:hover { padding-left: 0.8rem; border-color: var(--accent-dim); }
-    .pub-year { font-family: var(--font-mono); font-size: 0.82rem; color: var(--accent); padding-top: 0.15rem; min-width: 48px; }
-    .pub-body h4 { font-size: 1rem; font-weight: 600; margin-bottom: 0.35rem; line-height: 1.5; }
-    .pub-body p { color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 0.4rem; }
-    .pub-doi { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); }
-    .pub-doi a { color: var(--accent); text-decoration: none; }
-    .pub-doi a:hover { text-decoration: underline; }
-    .pub-badge { font-size: 0.68rem; font-family: var(--font-mono); padding: 0.3rem 0.6rem; border-radius: 100px; border: 1px solid var(--accent-dim); color: var(--accent); white-space: nowrap; }
-    .software-panel { background: linear-gradient(160deg, var(--bg-elevated), var(--surface)); border: 1px solid var(--border); border-radius: var(--radius); padding: 3rem; display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
-    .software-panel h3 { font-family: var(--font-display); font-size: 2rem; font-weight: 400; margin-bottom: 0.5rem; }
-    .software-panel .software-sub { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 1.2rem; }
-    .software-panel p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.75; margin-bottom: 1rem; }
-    .metric-row { display: flex; gap: 2rem; margin-top: 1.5rem; flex-wrap: wrap; }
-    .metric { display: flex; flex-direction: column; }
-    .metric .num { font-family: var(--font-display); font-size: 2.4rem; color: var(--accent); line-height: 1; }
-    .metric .lbl { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem; }
-    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; }
-    .skill-block h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; color: var(--accent); letter-spacing: 0.03em; }
+    
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+    .skill-block h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; color: var(--accent); }
     .skill-block ul { list-style: none; }
     .skill-block li { color: var(--text-secondary); font-size: 0.88rem; padding: 0.45rem 0; border-bottom: 1px solid rgba(30, 42, 58, 0.5); display: flex; align-items: center; gap: 0.6rem; }
     .skill-block li::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--accent-dim); flex-shrink: 0; }
-    .contact { text-align: center; padding: 8rem 2rem; }
-    .contact h2 { font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3.2rem); font-weight: 400; margin-bottom: 1rem; }
+    
+    .featured-card { border: 1px solid var(--accent-dim); box-shadow: 0 0 20px var(--accent-glow); }
+    .featured-badge { background: var(--accent); color: #04120c; font-size: 0.7rem; font-weight: bold; padding: 0.2rem 0.6rem; border-radius: 100px; position: absolute; top: 1.5rem; right: 1.5rem; }
+    
+    .pub-list { display: flex; flex-direction: column; gap: 1rem; }
+    .pub-item { display: grid; grid-template-columns: auto 1fr auto; gap: 1.5rem; align-items: start; padding: 1.6rem 0; border-bottom: 1px solid var(--border); transition: padding-left 0.3s; }
+    .pub-item:hover { padding-left: 0.8rem; border-color: var(--accent-dim); }
+    .pub-year { font-family: var(--font-mono); font-size: 0.82rem; color: var(--accent); min-width: 48px; }
+    .pub-body h4 { font-size: 1rem; font-weight: 600; margin-bottom: 0.35rem; }
+    .pub-body p { color: var(--text-secondary); font-size: 0.85rem; }
+    .pub-doi { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem; }
+    .pub-doi a { color: var(--accent); text-decoration: none; }
+    .pub-badge { font-size: 0.68rem; font-family: var(--font-mono); padding: 0.3rem 0.6rem; border-radius: 100px; border: 1px solid var(--border); color: var(--text-muted); white-space: nowrap; }
+    
+    .contact { text-align: center; padding: 6rem 2rem; }
+    .contact h2 { font-family: var(--font-display); font-size: clamp(2.2rem, 4vw, 3.2rem); margin-bottom: 1rem; }
     .contact p { color: var(--text-secondary); max-width: 500px; margin: 0 auto 2.5rem; }
     .contact-links { display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap; }
     footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; font-size: 0.8rem; color: var(--text-muted); }
     footer a { color: var(--accent); text-decoration: none; }
-    @media (max-width: 900px) { .hero-inner { grid-template-columns: 1fr; gap: 3rem; } .hero-visual { order: -1; max-width: 360px; margin: 0 auto; } .software-panel { grid-template-columns: 1fr; padding: 2rem; } .nav-links { display: none; } }
-    @media (max-width: 600px) { section { padding: 4.5rem 1.2rem; } .hero { padding: 5rem 1.2rem 3rem; } .pub-item { grid-template-columns: 1fr; gap: 0.5rem; } .pub-year { padding-top: 0; } .metric .num { font-size: 1.8rem; } .hero-actions { flex-direction: column; } .btn { justify-content: center; } }
-    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; } }
-    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+    
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .hero-visual { order: -1; max-width: 100%; }
+      .nav-links { display: none; }
+      .pub-item { grid-template-columns: 1fr; gap: 0.5rem; }
+    }
+    @media (max-width: 600px) {
+      section { padding: 4rem 1.2rem; }
+      .hero { padding: 5rem 1.2rem 3rem; }
+      .hero-actions { flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
@@ -115,20 +126,22 @@
     <a href="#" class="nav-logo">Reza <span>Anvaripour</span></a>
     <ul class="nav-links">
       <li><a href="#research">Research</a></li>
+      <li><a href="#cv">Skills</a></li>
+      <li><a href="#software">GenomicsOps</a></li>
       <li><a href="#publications">Publications</a></li>
-      <li><a href="#software">Software</a></li>
-      <li><a href="#cv">CV</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
+
   <section class="hero">
     <div class="hero-inner">
       <div class="hero-text">
         <div class="eyebrow">Independent Researcher · Tehran, Iran</div>
-        <h1>Decoding the <em>dark genome</em> of autoimmune disease.</h1>
+        <h1>Decoding the <em>dark genome</em> to find the foundation of autoimmune disease.</h1>
         <p>Molecular genetics, bioinformatics, and clinical genomics. I build computational tools that make complex variant classification reproducible and inspectable.</p>
+        <div class="hero-typing" id="typing-text"></div>
         <div class="hero-tags">
-          <span class="tag">Type 1 Diabetes</span><span class="tag">lncRNA</span><span class="tag">HLA Class II</span><span class="tag">ACMG/AMP</span><span class="tag">Single-cell</span><span class="tag">Immunopeptidomics</span>
+          <span class="tag">Type 1 Diabetes</span><span class="tag">lncRNA</span><span class="tag">HLA Class II</span><span class="tag">ACMG/AMP</span><span class="tag">Single-cell</span>
         </div>
         <div class="hero-actions">
           <a href="#publications" class="btn btn-primary">View Publications</a>
@@ -136,110 +149,125 @@
         </div>
       </div>
       <div class="hero-visual">
-        <div class="lab-stack">
-          <img src="lab-1.jpg" alt="Reza Anvaripour in the laboratory" loading="lazy" />
-          <img src="lab-2.jpg" alt="Pipetting in a molecular biology lab" loading="lazy" />
-          <img src="lab-3.jpg" alt="Laboratory bench work" loading="lazy" />
-        </div>
+        <img src="lab-1.jpg" alt="Lab work 1" loading="lazy" />
+        <img src="lab-2.jpg" alt="Lab work 2" loading="lazy" />
+        <img src="lab-3.jpg" alt="Lab work 3" loading="lazy" />
       </div>
     </div>
   </section>
+
   <section id="research">
     <div class="section-inner">
       <div class="section-label reveal">Research Focus</div>
-      <h2 class="section-title reveal">At the intersection of <br>genetics and computation.</h2>
-      <p class="section-desc reveal">Two threads run through my work: identifying non-coding transcripts that drive autoimmune disease, and building software that makes clinical variant interpretation transparent.</p>
+      <h2 class="section-title reveal">The foundation of autoimmune disease.</h2>
+      <p class="section-desc reveal">My work bridges the gap between wet-lab molecular biology and dry-lab computational analysis to understand the roots of autoimmunity.</p>
       <div class="research-grid">
         <div class="research-card reveal">
-          <div class="card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
-          <h3>SIMALR lncRNA at the TNFAIP3 risk locus</h3>
-          <p>A T1D-specific macrophage lncRNA induced by cytokines in 19 of 19 primary human islet donors. Predicted micropeptides bind DQ8 and DRB1*03:01 with no mimicry of known β-cell autoantigens.</p>
-          <div class="card-meta"><span>Research Square · 2026</span><span>Preprint</span></div>
+          <h3>Dark Genome & Non-coding RNA</h3>
+          <p>Investigating how long non-coding RNAs (like SIMALR) at risk loci drive disease. We found that cytokines activate a hidden non-coding program in primary human islets.</p>
+          <div class="card-meta"><span>lncRNA</span><span>Immunopeptidomics</span></div>
         </div>
         <div class="research-card reveal">
-          <div class="card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></div>
-          <h3>GenomicsOps — ACMG/AMP classification engine</h3>
-          <p>A strength-aware combining engine for clinical variant interpretation. 95.8% concordance on 12,644 expert-curated variants, fully offline, with a SHA-256 hash-chained audit log.</p>
-          <div class="card-meta"><span>Preprints.org · 2026</span><span>Software</span></div>
+          <h3>Clinical Variant Interpretation</h3>
+          <p>Building tools that make ACMG/AMP classification transparent. Moving from "black box" software to reproducible, auditable pipelines for clinical genomics.</p>
+          <div class="card-meta"><span>ACMG/AMP</span><span>Auditing</span></div>
         </div>
         <div class="research-card reveal">
-          <div class="card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4M5 5l3 3M16 16l3 3M5 19l3-3M16 8l3-3"/></svg></div>
-          <h3>Single-cell immunology & dark genome</h3>
-          <p>Analysis of 376,996 PBMCs and 143,974 monocytes for SIMALR expression. Cytokine-induced non-coding programs in primary human islets reveal immune-gene clustering at risk loci.</p>
-          <div class="card-meta"><span>PBMC scRNA-seq</span><span>Islet atlas</span></div>
+          <h3>Single-cell & Computational Biology</h3>
+          <p>Mining large-scale single-cell datasets to find rare populations (like macrophage sub-types) that express disease-relevant transcripts at specific stages.</p>
+          <div class="card-meta"><span>scRNA-seq</span><span>Bioinformatics</span></div>
         </div>
       </div>
     </div>
   </section>
+
+  <section id="cv">
+    <div class="section-inner">
+      <div class="section-label reveal">Background</div>
+      <h2 class="section-title reveal">Technical & Wet-Lab Skills.</h2>
+      <div class="skills-grid">
+        <div class="skill-block reveal">
+          <h4>Full Stack Web & Software Development</h4>
+          <ul>
+            <li>PHP & Slim Framework (Backend / REST APIs)</li>
+            <li>JavaScript, HTML5, CSS3, UX/UI Design</li>
+            <li>Python (Bioinformatics & Automation)</li>
+            <li>C# (Unity Game Development)</li>
+            <li>Git Version Control</li>
+          </ul>
+        </div>
+        <div class="skill-block reveal">
+          <h4>Molecular & Wet-Lab</h4>
+          <ul>
+            <li>DNA extraction, PCR/qPCR optimization</li>
+            <li>Cell culture & sterile technique</li>
+            <li>Monoclonal antibody production</li>
+            <li>Recombinant vaccine design</li>
+          </ul>
+        </div>
+        <div class="skill-block reveal">
+          <h4>Computational Biology</h4>
+          <ul>
+            <li>R (DESeq2, Seurat, data visualization)</li>
+            <li>SPSS (Regression, Time-Series)</li>
+            <li>BLAST, Ensembl, IEDB, GTEx</li>
+          </ul>
+        </div>
+        <div class="skill-block reveal">
+          <h4>Education</h4>
+          <ul>
+            <li>M.Sc. Molecular Genetics — Gonbad Kavous University (2021–2023)</li>
+            <li>B.Sc. Microbiology — Islamic Azad University, Karaj (2015–2021)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+          </section>
+            <section id="software">
+    <div class="section-inner">
+      <div class="section-label reveal">Featured Software</div>
+      <h2 class="section-title reveal">GenomicsOps.</h2>
+      <div class="research-card featured-card reveal" style="padding: 3rem;">
+        <div class="featured-badge">My Proudest Work</div>
+        <h3 style="font-size: 1.8rem; margin-bottom: 1rem;">Reproducible clinical variant classification.</h3>
+        <p style="font-size: 1.05rem; margin-bottom: 2rem;">A Windows desktop application built around a deterministic combining engine implementing the ACMG/AMP 2015 rules. Every classification records the criteria, the combining rule, and a SHA-256 hash over the evidence—so any result can be reconstructed and defended. Fully offline.</p>
+        <div style="display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 2rem;">
+          <div><span style="font-family: var(--font-display); font-size: 2.4rem; color: var(--accent);">95.8%</span><br><span style="font-size: 0.75rem; color: var(--text-muted);">Combining concordance</span></div>
+          <div><span style="font-family: var(--font-display); font-size: 2.4rem; color: var(--accent);">12,644</span><br><span style="font-size: 0.75rem; color: var(--text-muted);">Curated variants</span></div>
+          <div><span style="font-family: var(--font-display); font-size: 2.4rem; color: var(--accent);">68.9%</span><br><span style="font-size: 0.75rem; color: var(--text-muted);">Criterion recall</span></div>
+        </div>
+        <a href="https://doi.org/10.5281/zenodo.23114739" target="_blank" class="btn btn-primary">View Validation Corpus (Zenodo)</a>
+      </div>
+    </div>
+  </section>
+
   <section id="publications">
     <div class="section-inner">
-      <div class="section-label reveal">Selected Work</div>
-      <h2 class="section-title reveal">Publications & preprints.</h2>
-      <p class="section-desc reveal">Full record available on ORCID and Google Scholar.</p>
+      <div class="section-label reveal">Publications</div>
+      <h2 class="section-title reveal">Preprints & Papers.</h2>
       <div class="pub-list">
-        <div class="pub-item reveal">
-          <div class="pub-year">2026</div>
-          <div class="pub-body">
-            <h4>Macrophage lncRNA SIMALR at TNFAIP3 risk locus encodes HLA class II-binding micropeptides in type 1 diabetes</h4>
-            <p>Reza Anvaripour · Research Square preprint</p>
-            <div class="pub-doi">DOI: <a href="https://doi.org/10.21203/rs.3.rs-11454023/v1" target="_blank" rel="noopener">10.21203/rs.3.rs-11454023/v1</a></div>
-          </div>
-          <span class="pub-badge">Preprint</span>
-        </div>
         <div class="pub-item reveal">
           <div class="pub-year">2026</div>
           <div class="pub-body">
             <h4>GenomicsOps: an offline-first desktop application for ACMG/AMP variant classification with a strength-aware combining engine and hash-chained auditing</h4>
             <p>Reza Anvaripour · Preprints.org</p>
-            <div class="pub-doi">Validation corpus DOI: <a href="https://doi.org/10.5281/zenodo.23114739" target="_blank" rel="noopener">10.5281/zenodo.23114739</a></div>
+            <div class="pub-doi">DOI: <a href="https://doi.org/10.5281/zenodo.23114739" target="_blank">10.5281/zenodo.23114739</a></div>
           </div>
-          <span class="pub-badge">Software</span>
+          <span class="pub-badge" style="color: var(--accent); border-color: var(--accent);">Featured</span>
+        </div>
+        <div class="pub-item reveal">
+          <div class="pub-year">2026</div>
+          <div class="pub-body">
+            <h4>Macrophage lncRNA SIMALR at TNFAIP3 risk locus encodes HLA class II-binding micropeptides in type 1 diabetes</h4>
+            <p>Reza Anvaripour · Research Square preprint</p>
+            <div class="pub-doi">DOI: <a href="https://doi.org/10.21203/rs.3.rs-11454023/v1" target="_blank">10.21203/rs.3.rs-11454023/v1</a></div>
+          </div>
+          <span class="pub-badge">Preprint</span>
         </div>
       </div>
     </div>
   </section>
-  <section id="software">
-    <div class="section-inner">
-      <div class="section-label reveal">Software</div>
-      <h2 class="section-title reveal">GenomicsOps.</h2>
-      <div class="software-panel reveal">
-        <div>
-          <div class="software-sub">ACMG/AMP · Strength-aware · Offline</div>
-          <h3>Reproducible variant classification.</h3>
-          <p>A Windows desktop application built around a deterministic combining engine that implements the ACMG/AMP 2015 rules, ClinGen VCEP strength modifiers, and the Tavtigian points-based extension.</p>
-          <p>Every classification records the criteria, the combining rule, and a SHA-256 hash over the evidence—so any result can be reconstructed and defended.</p>
-          <div class="metric-row">
-            <div class="metric"><span class="num">95.8%</span><span class="lbl">Combining concordance</span></div>
-            <div class="metric"><span class="num">12,644</span><span class="lbl">Curated variants</span></div>
-            <div class="metric"><span class="num">68.9%</span><span class="lbl">Criterion recall</span></div>
-          </div>
-        </div>
-        <div>
-          <div style="background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 1.8rem; font-family: var(--font-mono); font-size: 0.78rem; line-height: 2;">
-            <div style="color: var(--text-muted); margin-bottom: 1rem;">// classification record</div>
-            <div><span style="color: var(--accent);">variant</span> <span style="color: var(--text-secondary);">BRCA1 c.5266dupC</span></div>
-            <div><span style="color: var(--accent);">criteria</span> <span style="color: var(--text-secondary);">PVS1, PM2, PP3, PP4</span></div>
-            <div><span style="color: var(--accent);">class</span> <span style="color: var(--danger);">PATHOGENIC</span></div>
-            <div><span style="color: var(--accent);">engine</span> <span style="color: var(--text-secondary);">0.1.0</span></div>
-            <div><span style="color: var(--accent);">audit</span> <span style="color: var(--text-secondary);">sha256:9c1f…</span></div>
-            <div style="margin-top: 1rem; color: var(--accent-dim);">✓ chain verified</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <section id="cv">
-    <div class="section-inner">
-      <div class="section-label reveal">Background</div>
-      <h2 class="section-title reveal">Education & skills.</h2>
-      <div class="skills-grid">
-        <div class="skill-block reveal"><h4>Education</h4><ul><li>M.Sc. Molecular Genetics — Gonbad Kavous University (2021–2023)</li><li>B.Sc. Microbiology — Islamic Azad University, Karaj (2015–2021)</li></ul></div>
-        <div class="skill-block reveal"><h4>Molecular & Wet-Lab</h4><ul><li>DNA extraction, PCR/qPCR optimization</li><li>Cell culture & sterile technique</li><li>Monoclonal antibody production</li><li>Recombinant vaccine design</li></ul></div>
-        <div class="skill-block reveal"><h4>Computational</h4><ul><li>Python (bioinformatics libraries)</li><li>R (DESeq2, Seurat, data visualization)</li><li>SPSS (regression, time-series)</li><li>BLAST, Ensembl, IEDB, GTEx</li></ul></div>
-        <div class="skill-block reveal"><h4>Research Capabilities</h4><ul><li>Hypothesis-driven project management</li><li>Scientific manuscript translation (EN/FA/AR)</li><li>Bioethics & reporting compliance</li><li>Multi-institutional collaboration</li></ul></div>
-      </div>
-    </div>
-  </section>
+
   <section id="contact" class="contact">
     <div class="section-inner">
       <h2 class="reveal">Let's collaborate.</h2>
@@ -251,12 +279,35 @@
       </div>
     </div>
   </section>
-  <footer>© 2026 Reza Anvaripour · Independent Researcher · <a href="https://orcid.org/0000-0003-2212-7646" target="_blank" rel="noopener">ORCID 0000-0003-2212-7646</a></footer>
-  </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <footer>© 2026 Reza Anvaripour · Independent Researcher</footer>
+</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script>
+    // --- TYPING EFFECT ---
+    (function() {
+      const phrases = ["$ aws s3 sync dark-genome/ --recursive", "$ python classify_variants.py --acmg", "$ git commit -m 'finding the cure'", "$ echo 'Decoding SIMALR...'"];
+      let i = 0, j = 0, currentPhrase = [], isDeleting = false, isEnd = false;
+      const el = document.getElementById('typing-text');
+      function loop() {
+        isEnd = false;
+        if (i === phrases.length) i = 0;
+        if (j === phrases[i].length + 1) isDeleting = true;
+        if (j === 0 && isDeleting) { isDeleting = false; i++; if (i === phrases.length) i = 0; }
+        currentPhrase = phrases[i].substring(0, j);
+        el.textContent = currentPhrase + (isDeleting ? "" : (j % 2 === 0 ? "|" : ""));
+        if (!isDeleting) { j++; } else { j--; }
+        const speed = isDeleting ? 30 : 80;
+        if (j === phrases[i].length && !isDeleting) { isEnd = true; setTimeout(loop, 2000); } 
+        else if (!isEnd) { setTimeout(loop, speed); }
+        else { isDeleting = true; loop(); }
+      }
+      loop();
+    })();
+
+    // --- DARKER, SLOWER DNA HELIX ---
     (function() {
       const canvas = document.getElementById('dna-canvas');
       if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -268,11 +319,14 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       const group = new THREE.Group(); scene.add(group);
       const NUM_PAIRS = 48, RADIUS = 2.2, SPACING = 0.55;
-      const matA = new THREE.MeshBasicMaterial({ color: 0x3ee8b5, transparent: true, opacity: 0.9 });
-      const matB = new THREE.MeshBasicMaterial({ color: 0x4a9eff, transparent: true, opacity: 0.9 });
-      const matRung = new THREE.MeshBasicMaterial({ color: 0x2a4a6a, transparent: true, opacity: 0.4 });
-      const sphereGeo = new THREE.SphereGeometry(0.13, 12, 12);
-      const rungGeo = new THREE.CylinderGeometry(0.025, 0.025, 1, 6);
+      
+      // Muted, dark colors
+      const matA = new THREE.MeshBasicMaterial({ color: 0x1a8f6d, transparent: true, opacity: 0.8 });
+      const matB = new THREE.MeshBasicMaterial({ color: 0x2a4a6a, transparent: true, opacity: 0.8 });
+      const matRung = new THREE.MeshBasicMaterial({ color: 0x101824, transparent: true, opacity: 0.5 });
+      
+      const sphereGeo = new THREE.SphereGeometry(0.12, 12, 12);
+      const rungGeo = new THREE.CylinderGeometry(0.02, 0.02, 1, 6);
       const spheresA = [], spheresB = [], rungs = [];
       for (let i = 0; i < NUM_PAIRS; i++) {
         const a = new THREE.Mesh(sphereGeo, matA); const b = new THREE.Mesh(sphereGeo, matB); const r = new THREE.Mesh(rungGeo, matRung);
@@ -284,7 +338,7 @@
       window.addEventListener('scroll', updateScroll, { passive: true }); updateScroll();
       let time = 0;
       function animate() {
-        requestAnimationFrame(animate); time += 0.005;
+        requestAnimationFrame(animate); time += 0.002; // Slower
         scrollProgress += (targetProgress - scrollProgress) * 0.06;
         const eased = scrollProgress * scrollProgress * (3 - 2 * scrollProgress);
         const twistMultiplier = 1 - eased * 0.65, spreadMultiplier = 0.6 + eased * 0.8;
@@ -307,17 +361,14 @@
       animate();
       window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
     })();
+
+    // --- SCROLL REVEAL ---
     (function() {
       const nav = document.getElementById('nav');
       window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 40); }, { passive: true });
       const reveals = document.querySelectorAll('.reveal');
-      const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }); }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+      const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); observer.unobserve(entry.target); } }); }, { threshold: 0.15 });
       reveals.forEach(el => observer.observe(el));
-      if (window.gsap && window.ScrollTrigger) {
-        gsap.registerPlugin(ScrollTrigger);
-        gsap.to('.lab-stack img:nth-child(1)', { y: -40, scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 } });
-        gsap.to('.lab-stack img:nth-child(2)', { y: 30, scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: 1 } });
-      }
     })();
   </script>
 </body>
