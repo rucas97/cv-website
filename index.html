@@ -3,24 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Reza Anvaripour | 3D Dark Genome Explorer</title>
+  <title>Reza Anvaripour | 3D Cell Explorer</title>
   
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   
-  <!-- Three.js & Post-Processing -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/EffectComposer.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/RenderPass.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/postprocessing/UnrealBloomPass.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/CopyShader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/shaders/LuminosityHighPassShader.js"></script>
-  
   <!-- FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   
-  <!-- Fonts -->
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <script>
@@ -28,18 +19,14 @@
       theme: {
         extend: {
           fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'], mono: ['"JetBrains Mono"', 'monospace'] },
-          colors: {
-            bio: { dark: '#030712', card: 'rgba(15, 23, 42, 0.85)', cyan: '#06b6d4', emerald: '#10b981', violet: '#8b5cf6', amber: '#f59e0b' }
-          }
         }
       }
     }
   </script>
 
   <style>
-    body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #030712; color: #f3f4f6; }
+    body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #030712; color: #f3f4f6; font-family: 'Plus Jakarta Sans', sans-serif;}
     
-    /* Glassmorphism */
     .glass-panel {
       background: rgba(10, 15, 30, 0.85);
       backdrop-filter: blur(20px);
@@ -61,27 +48,23 @@
       transform: translateY(-2px);
     }
 
-    /* Scrollbars */
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 4px; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.4); border-radius: 4px; }
 
-    /* 3D Holographic Tooltips */
     .organelle-label {
       position: absolute; transform: translate(-50%, -100%); pointer-events: none;
-      transition: opacity 0.3s ease, transform 0.3s ease; font-size: 12px;
-      letter-spacing: 0.1em; text-transform: uppercase; font-family: 'JetBrains Mono', monospace;
-      text-shadow: 0 0 10px rgba(6,182,212,0.8);
+      transition: opacity 0.3s ease; font-size: 11px; font-family: 'JetBrains Mono', monospace;
+      text-shadow: 0 0 10px rgba(6,182,212,0.8); text-transform: uppercase; letter-spacing: 0.1em;
     }
 
-    /* Loading Screen */
     #loading-screen {
       position: fixed; inset: 0; background: #030712; z-index: 9999;
       display: flex; flex-direction: column; justify-content: center; align-items: center;
-      transition: opacity 0.8s ease;
+      transition: opacity 0.5s ease;
     }
     .spinner {
-      width: 50px; height: 50px; border: 3px solid rgba(6,182,212,0.1);
+      width: 40px; height: 40px; border: 3px solid rgba(6,182,212,0.1);
       border-top-color: #06b6d4; border-radius: 50%; animation: spin 1s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
@@ -89,316 +72,189 @@
 </head>
 <body class="relative w-full h-full">
 
-  <!-- Loading Screen -->
   <div id="loading-screen">
     <div class="spinner mb-4"></div>
-    <div class="text-cyan-400 font-mono text-sm animate-pulse">Initializing Cytosol Environment...</div>
+    <div class="text-cyan-400 font-mono text-sm animate-pulse">Loading 3D Environment...</div>
+    <div id="error-msg" class="text-red-400 font-mono text-xs mt-4 text-center px-4"></div>
   </div>
 
-  <!-- 3D Canvas -->
   <div id="webgl-container" class="absolute inset-0 w-full h-full z-0 cursor-grab active:cursor-grabbing"></div>
-  <!-- Top Header HUD -->
-<header class="absolute top-0 left-0 w-full z-10 p-4 md:p-6 flex justify-between items-center pointer-events-none">
-  <div class="pointer-events-auto flex items-center space-x-3 bg-slate-900/80 backdrop-blur-md px-4 py-2.5 rounded-full border border-slate-700/50 shadow-lg shadow-cyan-500/10">
-    <div class="relative w-3 h-3">
-      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-      <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
-    </div>
-    <div>
-      <h1 class="text-sm font-bold tracking-wider text-slate-100 uppercase">Reza Anvaripour</h1>
-      <p class="text-[10px] text-cyan-400 font-mono">Independent Researcher • T1D & Dark Genome</p>
-    </div>
-  </div>
 
-  <!-- Quick Navigation (Desktop) -->
-  <div class="pointer-events-auto hidden md:flex items-center space-x-2 bg-slate-900/80 backdrop-blur-md p-1.5 rounded-full border border-slate-700/50 text-xs shadow-lg">
-    <button onclick="flyToOrganelle('nucleus')" class="px-4 py-1.5 rounded-full text-slate-300 hover:text-cyan-300 hover:bg-slate-800 transition">
-      <i class="fa-solid fa-atom mr-1.5 text-cyan-400"></i>About
-    </button>
-    <button onclick="flyToOrganelle('mitochondria')" class="px-4 py-1.5 rounded-full text-slate-300 hover:text-emerald-300 hover:bg-slate-800 transition">
-      <i class="fa-solid fa-microchip mr-1.5 text-emerald-400"></i>GenomicsOps
-    </button>
-    <button onclick="flyToOrganelle('golgi')" class="px-4 py-1.5 rounded-full text-slate-300 hover:text-amber-300 hover:bg-slate-800 transition">
-      <i class="fa-solid fa-layer-group mr-1.5 text-amber-400"></i>Research
-    </button>
-    <button onclick="flyToOrganelle('cytoskeleton')" class="px-4 py-1.5 rounded-full text-slate-300 hover:text-violet-300 hover:bg-slate-800 transition">
-      <i class="fa-solid fa-code mr-1.5 text-violet-400"></i>Skills
-    </button>
-  </div>
-
-  <!-- Reset Button -->
-  <div class="pointer-events-auto flex items-center space-x-2">
-    <button onclick="resetCameraView()" class="glass-btn px-4 py-2 rounded-full text-xs font-semibold text-cyan-300 flex items-center space-x-2">
-      <i class="fa-solid fa-compress text-xs"></i>
-      <span>Reset View</span>
-    </button>
-  </div>
-</header>
-
-<!-- Mobile Bottom Navigation -->
-<div class="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-20 w-[92%] max-w-sm pointer-events-auto">
-  <div class="glass-panel p-2 rounded-2xl flex justify-around text-xs">
-    <button onclick="flyToOrganelle('nucleus')" class="flex flex-col items-center p-2 text-slate-300 hover:text-cyan-400">
-      <i class="fa-solid fa-atom text-cyan-400 text-lg mb-1"></i><span class="text-[10px] font-mono">About</span>
-    </button>
-    <button onclick="flyToOrganelle('mitochondria')" class="flex flex-col items-center p-2 text-slate-300 hover:text-emerald-400">
-      <i class="fa-solid fa-microchip text-emerald-400 text-lg mb-1"></i><span class="text-[10px] font-mono">Software</span>
-    </button>
-    <button onclick="flyToOrganelle('golgi')" class="flex flex-col items-center p-2 text-slate-300 hover:text-amber-400">
-      <i class="fa-solid fa-layer-group text-amber-400 text-lg mb-1"></i><span class="text-[10px] font-mono">Research</span>
-    </button>
-    <button onclick="flyToOrganelle('cytoskeleton')" class="flex flex-col items-center p-2 text-slate-300 hover:text-violet-400">
-      <i class="fa-solid fa-code text-violet-400 text-lg mb-1"></i><span class="text-[10px] font-mono">Skills</span>
-    </button>
-  </div>
-</div>
-
-<!-- 3D World Tooltips -->
-<div id="tooltip-container" class="absolute inset-0 pointer-events-none z-10 overflow-hidden">
-  <div id="tooltip-nucleus" class="organelle-label opacity-0 glass-panel px-3 py-1.5 rounded-lg border-cyan-500/50 text-cyan-300">
-    <i class="fa-solid fa-atom mr-1.5"></i>NUCLEUS (About Reza)
-  </div>
-  <div id="tooltip-mitochondria" class="organelle-label opacity-0 glass-panel px-3 py-1.5 rounded-lg border-emerald-500/50 text-emerald-300">
-    <i class="fa-solid fa-microchip mr-1.5"></i>MITOCHONDRIA (GenomicsOps)
-  </div>
-  <div id="tooltip-golgi" class="organelle-label opacity-0 glass-panel px-3 py-1.5 rounded-lg border-amber-500/50 text-amber-300">
-    <i class="fa-solid fa-layer-group mr-1.5"></i>GOLGI (Research)
-  </div>
-  <div id="tooltip-cytoskeleton" class="organelle-label opacity-0 glass-panel px-3 py-1.5 rounded-lg border-violet-500/50 text-violet-300">
-    <i class="fa-solid fa-code mr-1.5"></i>CYTOSKELETON (Skills)
-  </div>
-</div>
-
-<!-- Instruction Toast -->
-<div id="instruction-toast" class="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 hidden md:flex items-center space-x-3 glass-panel px-5 py-3 rounded-xl border-slate-700/60 text-xs text-slate-300 pointer-events-none transition-opacity duration-500 shadow-xl">
-  <i class="fa-solid fa-computer-mouse text-cyan-400 text-sm animate-bounce"></i>
-  <span>Drag to rotate • Scroll to zoom • Click organelles to open data</span>
-</div>
-
-<!-- MODAL / HUD DISPLAY OVERLAYS -->
-<div id="hud-modal" class="fixed inset-0 z-30 flex items-center justify-center p-4 md:p-8 pointer-events-none opacity-0 transition-all duration-500 scale-95">
-  <div id="hud-card" class="pointer-events-auto relative w-full max-w-4xl max-h-[85vh] glass-panel rounded-3xl p-6 md:p-8 flex flex-col justify-between overflow-hidden border border-cyan-500/30 shadow-2xl transition-all">
-    
-    <button onclick="resetCameraView()" class="absolute top-5 right-5 z-20 w-10 h-10 rounded-full bg-slate-800/80 border border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700 flex items-center justify-center transition shadow-lg">
-      <i class="fa-solid fa-xmark text-lg"></i>
-    </button>
-
-    <div class="flex items-center space-x-4 mb-4 pb-4 border-b border-slate-700/50">
-      <div id="modal-icon-container" class="w-12 h-12 rounded-xl flex items-center justify-center text-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">
-        <i id="modal-icon" class="fa-solid fa-atom"></i>
+  <!-- Header -->
+  <header class="absolute top-0 left-0 w-full z-10 p-4 md:p-6 flex justify-between items-center pointer-events-none">
+    <div class="pointer-events-auto flex items-center space-x-3 bg-slate-900/80 backdrop-blur-md px-4 py-2.5 rounded-full border border-slate-700/50 shadow-lg shadow-cyan-500/10">
+      <div class="relative w-3 h-3">
+        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+        <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
       </div>
       <div>
-        <span id="modal-subtitle" class="text-[11px] font-mono tracking-widest text-cyan-400 uppercase">Organelle: Nucleus</span>
-        <h2 id="modal-title" class="text-2xl font-bold text-white">About & Research Vision</h2>
+        <h1 class="text-sm font-bold tracking-wider text-slate-100 uppercase">Reza Anvaripour</h1>
+        <p class="text-[10px] text-cyan-400 font-mono">T1D & Dark Genome</p>
       </div>
     </div>
 
-    <div id="modal-body" class="overflow-y-auto custom-scrollbar pr-2 my-2 space-y-6 text-sm text-slate-300 leading-relaxed">
-      <!-- Content injected via JS -->
+    <div class="pointer-events-auto hidden md:flex items-center space-x-2 bg-slate-900/80 backdrop-blur-md p-1.5 rounded-full border border-slate-700/50 text-xs shadow-lg">
+      <button onclick="flyToOrganelle('nucleus')" class="px-4 py-1.5 rounded-full text-slate-300 hover:text-cyan-300 hover:bg-slate-800 transition"><i class="fa-solid fa-atom mr-1.5 text-cyan-400"></i>About</button>
+      <button onclick="flyToOrganelle('mitochondria')" class="px-4 py-1.5 rounded-full text-slate-300 hover:text-emerald-300 hover:bg-slate-800 transition"><i class="fa-solid fa-microchip mr-1.5 text-emerald-400"></i>GenomicsOps</button>
+      <button onclick="flyToOrganelle('golgi')" class="px-4 py-1.5 rounded-full text-slate-300 hover:text-amber-300 hover:bg-slate-800 transition"><i class="fa-solid fa-layer-group mr-1.5 text-amber-400"></i>Research</button>
+      <button onclick="flyToOrganelle('cytoskeleton')" class="px-4 py-1.5 rounded-full text-slate-300 hover:text-violet-300 hover:bg-slate-800 transition"><i class="fa-solid fa-code mr-1.5 text-violet-400"></i>Skills</button>
     </div>
 
-    <div class="mt-4 pt-4 border-t border-slate-700/50 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
-      <div class="flex items-center space-x-2">
-        <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-        <span id="modal-status">Active Research Focus • Anvaripour Lab</span>
-      </div>
-      <div class="flex space-x-4">
-        <a href="https://orcid.org/0000-0003-2212-7646" target="_blank" class="hover:text-cyan-400 transition"><i class="fa-brands fa-orcid text-sm mr-1"></i>ORCID</a>
-        <a href="mailto:info@anvaripour.cc.cd" class="hover:text-cyan-400 transition"><i class="fa-solid fa-envelope text-sm mr-1"></i>Contact</a>
-      </div>
+    <div class="pointer-events-auto flex items-center space-x-2">
+      <button onclick="resetCameraView()" class="glass-btn px-4 py-2 rounded-full text-xs font-semibold text-cyan-300 flex items-center space-x-2">
+        <i class="fa-solid fa-compress text-xs"></i><span>Reset View</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Nav -->
+  <div class="md:hidden absolute bottom-4 left-1/2 -translate-x-1/2 z-20 w-[92%] max-w-sm pointer-events-auto">
+    <div class="glass-panel p-2 rounded-2xl flex justify-around text-xs">
+      <button onclick="flyToOrganelle('nucleus')" class="flex flex-col items-center p-2 text-slate-300 hover:text-cyan-400"><i class="fa-solid fa-atom text-cyan-400 text-lg mb-1"></i><span class="text-[10px] font-mono">About</span></button>
+      <button onclick="flyToOrganelle('mitochondria')" class="flex flex-col items-center p-2 text-slate-300 hover:text-emerald-400"><i class="fa-solid fa-microchip text-emerald-400 text-lg mb-1"></i><span class="text-[10px] font-mono">Software</span></button>
+      <button onclick="flyToOrganelle('golgi')" class="flex flex-col items-center p-2 text-slate-300 hover:text-amber-400"><i class="fa-solid fa-layer-group text-amber-400 text-lg mb-1"></i><span class="text-[10px] font-mono">Research</span></button>
+      <button onclick="flyToOrganelle('cytoskeleton')" class="flex flex-col items-center p-2 text-slate-300 hover:text-violet-400"><i class="fa-solid fa-code text-violet-400 text-lg mb-1"></i><span class="text-[10px] font-mono">Skills</span></button>
     </div>
   </div>
-</div>
-  <script>
+
+  <!-- Tooltips -->
+  <div id="tooltip-container" class="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+    <div id="tooltip-nucleus" class="organelle-label opacity-0 glass-panel px-3 py-1.5 rounded-lg border-cyan-500/50 text-cyan-300"><i class="fa-solid fa-atom mr-1.5"></i>NUCLEUS (About)</div>
+    <div id="tooltip-mitochondria" class="organelle-label opacity-0 glass-panel px-3 py-1.5 rounded-lg border-emerald-500/50 text-emerald-300"><i class="fa-solid fa-microchip mr-1.5"></i>MITOCHONDRIA (Software)</div>
+    <div id="tooltip-golgi" class="organelle-label opacity-0 glass-panel px-3 py-1.5 rounded-lg border-amber-500/50 text-amber-300"><i class="fa-solid fa-layer-group mr-1.5"></i>GOLGI (Research)</div>
+    <div id="tooltip-cytoskeleton" class="organelle-label opacity-0 glass-panel px-3 py-1.5 rounded-lg border-violet-500/50 text-violet-300"><i class="fa-solid fa-code mr-1.5"></i>CYTOSKELETON (Skills)</div>
+  </div>
+
+  <!-- Modal -->
+  <div id="hud-modal" class="fixed inset-0 z-30 flex items-center justify-center p-4 md:p-8 pointer-events-none opacity-0 transition-all duration-500 scale-95">
+    <div id="hud-card" class="pointer-events-auto relative w-full max-w-4xl max-h-[85vh] glass-panel rounded-3xl p-6 md:p-8 flex flex-col justify-between overflow-hidden border border-cyan-500/30 shadow-2xl transition-all">
+      <button onclick="resetCameraView()" class="absolute top-5 right-5 z-20 w-10 h-10 rounded-full bg-slate-800/80 border border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700 flex items-center justify-center transition shadow-lg"><i class="fa-solid fa-xmark text-lg"></i></button>
+      <div class="flex items-center space-x-4 mb-4 pb-4 border-b border-slate-700/50">
+        <div id="modal-icon-container" class="w-12 h-12 rounded-xl flex items-center justify-center text-xl bg-cyan-500/20 text-cyan-400 border border-cyan-500/30"><i id="modal-icon" class="fa-solid fa-atom"></i></div>
+        <div>
+          <span id="modal-subtitle" class="text-[11px] font-mono tracking-widest text-cyan-400 uppercase">Organelle</span>
+          <h2 id="modal-title" class="text-2xl font-bold text-white">Title</h2>
+        </div>
+      </div>
+      <div id="modal-body" class="overflow-y-auto custom-scrollbar pr-2 my-2 space-y-6 text-sm text-slate-300 leading-relaxed"></div>
+      <div class="mt-4 pt-4 border-t border-slate-700/50 flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
+        <div class="flex items-center space-x-2"><span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span><span id="modal-status">Status</span></div>
+        <div class="flex space-x-4"><a href="https://orcid.org/0000-0003-2212-7646" target="_blank" class="hover:text-cyan-400 transition"><i class="fa-brands fa-orcid text-sm mr-1"></i>ORCID</a><a href="mailto:info@anvaripour.cc.cd" class="hover:text-cyan-400 transition"><i class="fa-solid fa-envelope text-sm mr-1"></i>Contact</a></div>
+      </div>
+    </div>
+        </div>
+        <script>
   const CELL_DATA = {
     nucleus: {
-      title: "Reza Anvaripour",
-      subtitle: "Organelle: Nucleus • The Command Center",
-      icon: "fa-atom",
-      colorClass: "text-cyan-400",
-      bgClass: "bg-cyan-500/20",
-      borderClass: "border-cyan-500/30",
-      status: "Independent Researcher • Tehran, Iran",
+      title: "Reza Anvaripour", subtitle: "Organelle: Nucleus • Command Center", icon: "fa-atom",
+      colorClass: "text-cyan-400", bgClass: "bg-cyan-500/20", borderClass: "border-cyan-500/30", status: "Independent Researcher • Tehran, Iran",
       content: `
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="md:col-span-1 flex flex-col items-center text-center p-4 bg-slate-900/60 rounded-2xl border border-slate-800">
-            <div class="relative w-32 h-32 rounded-full overflow-hidden mb-3 border-2 border-cyan-400/50 shadow-lg shadow-cyan-500/20">
-              <!-- Your Lab Photo -->
-              <img src="lab-1.jpg" alt="Reza Anvaripour" class="w-full h-full object-cover">
-            </div>
+            <div class="relative w-32 h-32 rounded-full overflow-hidden mb-3 border-2 border-cyan-400/50 shadow-lg"><img src="lab-1.jpg" alt="Reza" class="w-full h-full object-cover"></div>
             <h3 class="font-bold text-white text-base">Reza Anvaripour</h3>
-            <p class="text-xs text-cyan-400 font-mono mt-1">Molecular Genetics & Comp Bio</p>
-            <div class="mt-3 flex flex-wrap gap-1 justify-center">
-              <span class="px-2 py-0.5 text-[10px] bg-cyan-950 text-cyan-300 border border-cyan-800 rounded-full">T1D</span>
-              <span class="px-2 py-0.5 text-[10px] bg-cyan-950 text-cyan-300 border border-cyan-800 rounded-full">Dark Genome</span>
-            </div>
+            <p class="text-xs text-cyan-400 font-mono mt-1">Mol. Genetics & Comp Bio</p>
           </div>
-          
           <div class="md:col-span-2 space-y-4">
             <div>
               <h4 class="text-base font-semibold text-white mb-2 flex items-center"><i class="fa-solid fa-dna text-cyan-400 mr-2"></i>Research Vision</h4>
-              <p class="text-slate-300 text-sm leading-relaxed">
-                I bridge molecular genetics and computational biology. My ultimate target is <strong>curing autoimmune disease</strong> by understanding the foundation of Type 1 Diabetes. I focus on decoding the "dark genome"—the non-coding regions that harbor hidden risk loci.
-              </p>
-            </div>
-            <div class="p-4 bg-slate-800/40 rounded-xl border border-slate-700/50">
-              <h5 class="text-xs font-bold text-cyan-300 uppercase tracking-wider mb-2 font-mono">Primary Focus Areas</h5>
-              <ul class="space-y-1.5 text-xs text-slate-300 list-disc list-inside">
-                <li>6q23 locus harboring TNFAIP3</li>
-                <li>Macrophage-restricted lncRNA induction</li>
-                <li>HLA Class II binding micropeptides</li>
-              </ul>
+              <p class="text-slate-300 text-sm leading-relaxed">I bridge molecular genetics and computational biology. My ultimate target is <strong>curing autoimmune disease</strong> by understanding the foundation of Type 1 Diabetes. I focus on decoding the "dark genome"—the non-coding regions that harbor hidden risk loci.</p>
             </div>
           </div>
         </div>
       `
     },
     mitochondria: {
-      title: "GenomicsOps",
-      subtitle: "Organelle: Mitochondria • The Powerhouse Engine",
-      icon: "fa-microchip",
-      colorClass: "text-emerald-400",
-      bgClass: "bg-emerald-500/20",
-      borderClass: "border-emerald-500/30",
-      status: "Featured Software • ACMG/AMP Engine",
+      title: "GenomicsOps", subtitle: "Organelle: Mitochondria • The Engine", icon: "fa-microchip",
+      colorClass: "text-emerald-400", bgClass: "bg-emerald-500/20", borderClass: "border-emerald-500/30", status: "Featured Software • ACMG/AMP Engine",
       content: `
         <div class="space-y-5">
           <div class="p-5 bg-slate-900/60 rounded-2xl border border-slate-800">
             <h4 class="text-lg font-bold text-white mb-2">Offline-first Desktop Application for Variant Classification</h4>
-            <p class="text-sm text-slate-300 leading-relaxed mb-4">
-              Built with a deterministic, strength-aware combining engine and a SHA-256 hash-chained audit log. Every classification records the criteria, the combining rule, and a hash over the evidence—so any result can be reconstructed and defended.
-            </p>
-            
+            <p class="text-sm text-slate-300 leading-relaxed mb-4">Built with a deterministic, strength-aware combining engine and a SHA-256 hash-chained audit log.</p>
             <div class="grid grid-cols-3 gap-4 border-t border-slate-700 pt-4 mt-2">
-              <div>
-                <div class="font-mono text-2xl text-emerald-400">95.8%</div>
-                <div class="text-[10px] text-slate-400 uppercase">Concordance</div>
-              </div>
-              <div>
-                <div class="font-mono text-2xl text-emerald-400">12,644</div>
-                <div class="text-[10px] text-slate-400 uppercase">Variants</div>
-              </div>
-              <div>
-                <div class="font-mono text-2xl text-emerald-400">100%</div>
-                <div class="text-[10px] text-slate-400 uppercase">Offline</div>
-              </div>
+              <div><div class="font-mono text-2xl text-emerald-400">95.8%</div><div class="text-[10px] text-slate-400 uppercase">Concordance</div></div>
+              <div><div class="font-mono text-2xl text-emerald-400">12,644</div><div class="text-[10px] text-slate-400 uppercase">Variants</div></div>
+              <div><div class="font-mono text-2xl text-emerald-400">100%</div><div class="text-[10px] text-slate-400 uppercase">Offline</div></div>
             </div>
-            
             <div class="mt-5 flex justify-between items-center">
               <span class="text-xs text-slate-400 font-mono">DOI: 10.5281/zenodo.23114739</span>
-              <a href="https://doi.org/10.5281/zenodo.23114739" target="_blank" class="text-emerald-400 hover:text-emerald-300 text-sm font-semibold underline"><i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>View Corpus</a>
+              <a href="https://doi.org/10.5281/zenodo.23114739" target="_blank" class="text-emerald-400 hover:text-emerald-300 text-sm font-semibold underline">View Corpus</a>
             </div>
           </div>
         </div>
       `
     },
     golgi: {
-      title: "Research & Publications",
-      subtitle: "Organelle: Golgi • Synthesis & Output",
-      icon: "fa-layer-group",
-      colorClass: "text-amber-400",
-      bgClass: "bg-amber-500/20",
-      borderClass: "border-amber-500/30",
-      status: "Selected Publications & Preprints",
+      title: "Research & Publications", subtitle: "Organelle: Golgi • Synthesis", icon: "fa-layer-group",
+      colorClass: "text-amber-400", bgClass: "bg-amber-500/20", borderClass: "border-amber-500/30", status: "Selected Publications",
       content: `
         <div class="space-y-4">
-          <div class="p-4 bg-slate-900/60 rounded-2xl border border-slate-800 hover:border-amber-500/40 transition">
-            <div class="flex justify-between items-start gap-2 mb-1">
-              <span class="text-[10px] font-mono px-2 py-0.5 bg-amber-950 text-amber-400 rounded border border-amber-800">Featured Software</span>
-            </div>
-            <h4 class="text-base font-semibold text-white mb-1">GenomicsOps: an offline-first desktop application for ACMG/AMP variant classification</h4>
-            <p class="text-xs text-slate-400 mt-2">Reza Anvaripour · Preprints.org</p>
-            <div class="mt-3 flex justify-between items-center text-xs">
-              <span class="text-slate-400 font-mono text-[11px]">DOI: 10.5281/zenodo.23114739</span>
-            </div>
-          </div>
-
-          <div class="p-4 bg-slate-900/60 rounded-2xl border border-slate-800 hover:border-amber-500/40 transition">
-            <div class="flex justify-between items-start gap-2 mb-1">
-              <span class="text-[10px] font-mono px-2 py-0.5 bg-amber-950 text-amber-400 rounded border border-amber-800">Preprint</span>
-            </div>
-            <h4 class="text-base font-semibold text-white mb-1">Macrophage lncRNA SIMALR at TNFAIP3 risk locus encodes HLA class II-binding micropeptides in type 1 diabetes</h4>
-            <p class="text-xs text-slate-400 mt-2">Reza Anvaripour · Research Square preprint</p>
-            <div class="mt-3 flex justify-between items-center text-xs">
-              <span class="text-slate-400 font-mono text-[11px]">DOI: 10.21203/rs.3.rs-11454023/v1</span>
-            </div>
-          </div>
+          <div class="p-4 bg-slate-900/60 rounded-2xl border border-slate-800"><h4 class="text-base font-semibold text-white mb-1">GenomicsOps: an offline-first desktop application for ACMG/AMP variant classification</h4><p class="text-xs text-slate-400 mt-2">Reza Anvaripour · Preprints.org</p></div>
+          <div class="p-4 bg-slate-900/60 rounded-2xl border border-slate-800"><h4 class="text-base font-semibold text-white mb-1">Macrophage lncRNA SIMALR at TNFAIP3 risk locus encodes HLA class II-binding micropeptides</h4><p class="text-xs text-slate-400 mt-2">Reza Anvaripour · Research Square</p></div>
         </div>
       `
     },
     cytoskeleton: {
-      title: "Skills & CV",
-      subtitle: "Organelle: Cytoskeleton • Structural Framework",
-      icon: "fa-code",
-      colorClass: "text-violet-400",
-      bgClass: "bg-violet-500/20",
-      borderClass: "border-violet-500/30",
-      status: "Curriculum Vitae • Technical Stack",
+      title: "Skills & CV", subtitle: "Organelle: Cytoskeleton • Framework", icon: "fa-code",
+      colorClass: "text-violet-400", bgClass: "bg-violet-500/20", borderClass: "border-violet-500/30", status: "Curriculum Vitae",
       content: `
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <h4 class="text-xs font-bold text-violet-300 uppercase font-mono tracking-wider mb-3"><i class="fa-solid fa-graduation-cap mr-2"></i>Education</h4>
+            <h4 class="text-xs font-bold text-violet-300 uppercase font-mono tracking-wider mb-3">Education</h4>
             <div class="space-y-4 border-l-2 border-violet-500/30 pl-4">
-              <div class="relative">
-                <div class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-violet-400"></div>
-                <span class="text-[10px] font-mono text-violet-400">2021 - 2023</span>
-                <h5 class="text-sm font-semibold text-white">M.Sc. Molecular Genetics</h5>
-                <p class="text-xs text-slate-400">Gonbad Kavous University</p>
-              </div>
-              <div class="relative">
-                <div class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-slate-600"></div>
-                <span class="text-[10px] font-mono text-slate-400">2015 - 2021</span>
-                <h5 class="text-sm font-semibold text-white">B.Sc. Microbiology</h5>
-                <p class="text-xs text-slate-400">Islamic Azad University, Karaj</p>
-              </div>
+              <div class="relative"><div class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-violet-400"></div><span class="text-[10px] font-mono text-violet-400">2021 - 2023</span><h5 class="text-sm font-semibold text-white">M.Sc. Molecular Genetics</h5><p class="text-xs text-slate-400">Gonbad Kavous University</p></div>
+              <div class="relative"><div class="absolute -left-[21px] top-1 w-2.5 h-2.5 rounded-full bg-slate-600"></div><span class="text-[10px] font-mono text-slate-400">2015 - 2021</span><h5 class="text-sm font-semibold text-white">B.Sc. Microbiology</h5><p class="text-xs text-slate-400">Islamic Azad University</p></div>
             </div>
           </div>
-
           <div class="space-y-4">
-            <h4 class="text-xs font-bold text-violet-300 uppercase font-mono tracking-wider"><i class="fa-solid fa-laptop-code mr-2"></i>Technical Stack</h4>
-            <div>
-              <div class="flex justify-between text-xs mb-1 text-slate-300"><span>Programming (PHP, JS, Python, C#)</span><span class="text-violet-400 font-mono">95%</span></div>
-              <div class="w-full bg-slate-800 rounded-full h-1.5"><div class="bg-violet-500 h-1.5 rounded-full" style="width: 95%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-xs mb-1 text-slate-300"><span>Computational Biology (R, SPSS, BLAST)</span><span class="text-violet-400 font-mono">90%</span></div>
-              <div class="w-full bg-slate-800 rounded-full h-1.5"><div class="bg-violet-500 h-1.5 rounded-full" style="width: 90%"></div></div>
-            </div>
-            <div>
-              <div class="flex justify-between text-xs mb-1 text-slate-300"><span>Wet-Lab (PCR, Cell Culture)</span><span class="text-violet-400 font-mono">85%</span></div>
-              <div class="w-full bg-slate-800 rounded-full h-1.5"><div class="bg-violet-500 h-1.5 rounded-full" style="width: 85%"></div></div>
-            </div>
+            <h4 class="text-xs font-bold text-violet-300 uppercase font-mono tracking-wider">Technical Stack</h4>
+            <div><div class="flex justify-between text-xs mb-1 text-slate-300"><span>Programming (PHP, JS, Python)</span><span class="text-violet-400 font-mono">95%</span></div><div class="w-full bg-slate-800 rounded-full h-1.5"><div class="bg-violet-500 h-1.5 rounded-full" style="width: 95%"></div></div></div>
+            <div><div class="flex justify-between text-xs mb-1 text-slate-300"><span>Computational Biology (R, SPSS)</span><span class="text-violet-400 font-mono">90%</span></div><div class="w-full bg-slate-800 rounded-full h-1.5"><div class="bg-violet-500 h-1.5 rounded-full" style="width: 90%"></div></div></div>
           </div>
         </div>
       `
     }
   };
-  </script>
-    <script>
-    let scene, camera, renderer, composer;
-    let controls;
+    </script>
+      <!-- Loading ONLY the essential libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  
+  <script>
+    // Error Catcher
+    window.addEventListener('error', function(e) {
+      const errDiv = document.getElementById('error-msg');
+      if (errDiv && e.message) {
+        errDiv.innerHTML = "Error: " + e.message + "<br>Please check your internet connection or VPN.";
+      }
+    }, true);
+
+    let scene, camera, renderer, controls;
     let organelles = {};
     let cytosolParticles;
     let raycaster, mouse;
     let hoveredObj = null;
     let activeTarget = null;
-    let targetCamPos = new THREE.Vector3(0, 0, 45);
-    let targetLookAt = new THREE.Vector3(0, 0, 0);
     let isTransitioning = false;
 
     window.onload = function() {
-      initScene();
-      createCellEnvironment();
-      createOrganelles();
-      setupEvents();
-      animate();
+      try {
+        initScene();
+        createCellEnvironment();
+        createOrganelles();
+        setupEvents();
+        animate();
 
-      // Hide loading screen
-      setTimeout(() => {
-        document.getElementById('loading-screen').style.opacity = '0';
-        setTimeout(() => document.getElementById('loading-screen').remove(), 800);
-        document.getElementById('instruction-toast').classList.remove('hidden');
-      }, 1500);
+        setTimeout(() => {
+          const loader = document.getElementById('loading-screen');
+          loader.style.opacity = '0';
+          setTimeout(() => loader.remove(), 500);
+        }, 500);
+      } catch (error) {
+        document.getElementById('error-msg').innerHTML = "Initialization Error: " + error.message;
+        console.error(error);
+      }
     };
 
     function initScene() {
@@ -407,12 +263,11 @@
       scene.fog = new THREE.FogExp2(0x030712, 0.008);
 
       camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.copy(targetCamPos);
+      camera.position.set(0, 0, 45);
 
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
       container.appendChild(renderer.domElement);
 
       // Free-roaming Game Camera
@@ -421,180 +276,96 @@
       controls.dampingFactor = 0.05;
       controls.rotateSpeed = 0.8;
       controls.zoomSpeed = 1.2;
-      controls.panSpeed = 0.8;
-      controls.screenSpacePanning = true;
       controls.minDistance = 10;
       controls.maxDistance = 100;
-
-      // Post-Processing (Glow/Bloom)
-      const renderScene = new THREE.RenderPass(scene, camera);
-      const bloomPass = new THREE.UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.85);
-      bloomPass.threshold = 0.1;
-      bloomPass.strength = 1.2;
-      bloomPass.radius = 0.5;
-
-      composer = new THREE.EffectComposer(renderer);
-      composer.addPass(renderScene);
-      composer.addPass(bloomPass);
 
       raycaster = new THREE.Raycaster();
       mouse = new THREE.Vector2();
 
-      // Lighting
-      scene.add(new THREE.AmbientLight(0x0f172a, 2));
-      
-      const centerLight = new THREE.PointLight(0x06b6d4, 4, 100);
-      scene.add(centerLight);
-      
-      const topLight = new THREE.PointLight(0x8b5cf6, 3, 80);
-      topLight.position.set(20, 30, 20);
-      scene.add(topLight);
-      
-      const bottomLight = new THREE.PointLight(0x10b981, 3, 80);
-      bottomLight.position.set(-20, -30, -20);
-      scene.add(bottomLight);
+      // Simulated Glow Lighting
+      scene.add(new THREE.AmbientLight(0x0f172a, 2.5));
+      const light1 = new THREE.PointLight(0x06b6d4, 5, 100); scene.add(light1);
+      const light2 = new THREE.PointLight(0x10b981, 3, 80); light2.position.set(-20, 20, 20); scene.add(light2);
+      const light3 = new THREE.PointLight(0x8b5cf6, 3, 80); light3.position.set(20, -20, -20); scene.add(light3);
     }
 
     function createCellEnvironment() {
-      // Cell Membrane (Giant transparent sphere)
-      const membraneGeo = new THREE.SphereGeometry(45, 64, 64);
-      const membraneMat = new THREE.MeshPhysicalMaterial({
-        color: 0x0284c7,
-        transparent: true,
-        opacity: 0.05,
-        wireframe: true,
-        side: THREE.BackSide
-      });
-      scene.add(new THREE.Mesh(membraneGeo, membraneMat));
+      const membraneMat = new THREE.MeshBasicMaterial({ color: 0x0284c7, transparent: true, opacity: 0.05, wireframe: true, side: THREE.BackSide });
+      scene.add(new THREE.Mesh(new THREE.SphereGeometry(45, 32, 32), membraneMat));
 
-      // Floating Particles (Cytosol / Cytoplasm)
-      const particleCount = 1000;
+      const particleCount = 800;
       const geometry = new THREE.BufferGeometry();
       const positions = new Float32Array(particleCount * 3);
       const colors = new Float32Array(particleCount * 3);
-      
       const color = new THREE.Color();
 
       for (let i = 0; i < particleCount; i++) {
-        // Sphere distribution
         const r = 45 * Math.cbrt(Math.random());
         const theta = Math.random() * Math.PI * 2;
         const phi = Math.acos(2 * Math.random() - 1);
-        
         positions[i*3] = r * Math.sin(phi) * Math.cos(theta);
         positions[i*3+1] = r * Math.sin(phi) * Math.sin(theta);
         positions[i*3+2] = r * Math.cos(phi);
-
         color.setHSL(0.5 + Math.random() * 0.2, 0.8, 0.5);
-        colors[i*3] = color.r;
-        colors[i*3+1] = color.g;
-        colors[i*3+2] = color.b;
+        colors[i*3] = color.r; colors[i*3+1] = color.g; colors[i*3+2] = color.b;
       }
-
       geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-      const material = new THREE.PointsMaterial({
-        size: 0.6, vertexColors: true, transparent: true, opacity: 0.6,
-        blending: THREE.AdditiveBlending, depthWrite: false
-      });
-
+      const material = new THREE.PointsMaterial({ size: 0.6, vertexColors: true, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false });
       cytosolParticles = new THREE.Points(geometry, material);
       scene.add(cytosolParticles);
     }
 
     function createOrganelles() {
-      // 1. NUCLEUS (Center - About)
+      // 1. NUCLEUS
       const nucleusGroup = new THREE.Group();
-      nucleusGroup.position.set(0, 0, 0);
-
-      const nucMesh = new THREE.Mesh(
-        new THREE.IcosahedronGeometry(7, 2),
-        new THREE.MeshPhysicalMaterial({
-          color: 0x06b6d4, emissive: 0x0891b2, emissiveIntensity: 0.8,
-          transparent: true, opacity: 0.8, roughness: 0.2, metalness: 0.1,
-          wireframe: false, clearcoat: 1, clearcoatRoughness: 0.1
-        })
-      );
+      const nucMesh = new THREE.Mesh(new THREE.IcosahedronGeometry(7, 2), new THREE.MeshPhongMaterial({ color: 0x06b6d4, emissive: 0x0891b2, emissiveIntensity: 1.2, transparent: true, opacity: 0.9, wireframe: false }));
       nucleusGroup.add(nucMesh);
-
-      // Inner Chromatin
-      const chromatin = new THREE.Mesh(
-        new THREE.SphereGeometry(5, 32, 32),
-        new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true, transparent: true, opacity: 0.3 })
-      );
+      const chromatin = new THREE.Mesh(new THREE.SphereGeometry(5, 16, 16), new THREE.MeshBasicMaterial({ color: 0x38bdf8, wireframe: true, transparent: true, opacity: 0.4 }));
       nucleusGroup.add(chromatin);
-
       scene.add(nucleusGroup);
       organelles.nucleus = { group: nucleusGroup, mesh: nucMesh, camPos: new THREE.Vector3(0, 5, 18) };
 
-      // 2. MITOCHONDRIA (Left - GenomicsOps)
+      // 2. MITOCHONDRIA
       const mitoGroup = new THREE.Group();
       mitoGroup.position.set(-18, 8, -5);
-
-      const mitoMat = new THREE.MeshPhysicalMaterial({
-        color: 0x10b981, emissive: 0x047857, emissiveIntensity: 0.6,
-        roughness: 0.3, metalness: 0.2, clearcoat: 1
-      });
-
+      const mitoMat = new THREE.MeshPhongMaterial({ color: 0x10b981, emissive: 0x047857, emissiveIntensity: 1.0 });
       const mitoBody = new THREE.Mesh(new THREE.CylinderGeometry(3, 3, 8, 32), mitoMat);
-      const mitoTop = new THREE.Mesh(new THREE.SphereGeometry(3, 32, 16, 0, Math.PI*2, 0, Math.PI/2), mitoMat);
-      mitoTop.position.y = 4;
-      const mitoBot = new THREE.Mesh(new THREE.SphereGeometry(3, 32, 16, 0, Math.PI*2, Math.PI/2, Math.PI/2), mitoMat);
-      mitoBot.position.y = -4;
-      
+      const mitoTop = new THREE.Mesh(new THREE.SphereGeometry(3, 32, 16, 0, Math.PI*2, 0, Math.PI/2), mitoMat); mitoTop.position.y = 4;
+      const mitoBot = new THREE.Mesh(new THREE.SphereGeometry(3, 32, 16, 0, Math.PI*2, Math.PI/2, Math.PI/2), mitoMat); mitoBot.position.y = -4;
       mitoGroup.add(mitoBody, mitoTop, mitoBot);
-      
-      // Cristae
-      for(let i=-3; i<=3; i+=1.5) {
-        const crista = new THREE.Mesh(new THREE.TorusGeometry(2, 0.2, 8, 24), new THREE.MeshBasicMaterial({color: 0x34d399}));
-        crista.rotation.x = Math.PI/2;
-        crista.position.y = i;
-        mitoGroup.add(crista);
-      }
-      
       mitoGroup.rotation.z = Math.PI/4;
       scene.add(mitoGroup);
       organelles.mitochondria = { group: mitoGroup, mesh: mitoBody, camPos: new THREE.Vector3(-18, 8, 10) };
 
-      // 3. GOLGI (Right - Research)
+      // 3. GOLGI
       const golgiGroup = new THREE.Group();
       golgiGroup.position.set(18, -10, -5);
-
-      const golgiMat = new THREE.MeshPhysicalMaterial({
-        color: 0xf59e0b, emissive: 0xb45309, emissiveIntensity: 0.5,
-        side: THREE.DoubleSide, roughness: 0.4, metalness: 0.3
-      });
-
-      for(let i=0; i<6; i++) {
-        const ribbon = new THREE.Mesh(new THREE.TorusGeometry(4 + i*0.8, 0.4, 16, 64, Math.PI * 1.2), golgiMat);
-        ribbon.rotation.x = Math.PI/2 + i*0.1;
-        ribbon.position.y = i * 0.8;
+      const golgiMat = new THREE.MeshPhongMaterial({ color: 0xf59e0b, emissive: 0xb45309, emissiveIntensity: 1.0, side: THREE.DoubleSide });
+      for(let i=0; i<5; i++) {
+        const ribbon = new THREE.Mesh(new THREE.TorusGeometry(4 + i*0.8, 0.4, 8, 32, Math.PI * 1.2), golgiMat);
+        ribbon.rotation.x = Math.PI/2 + i*0.1; ribbon.position.y = i * 0.8;
         golgiGroup.add(ribbon);
       }
-      
       scene.add(golgiGroup);
       organelles.golgi = { group: golgiGroup, mesh: golgiGroup.children[0], camPos: new THREE.Vector3(18, -10, 12) };
 
-      // 4. CYTOSKELETON (Top Right - Skills)
+      // 4. CYTOSKELETON
       const cytoGroup = new THREE.Group();
       cytoGroup.position.set(15, 18, -10);
-
-      const tubeMat = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.7 });
-      for(let i=0; i<8; i++) {
+      const tubeMat = new THREE.MeshBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.8 });
+      for(let i=0; i<6; i++) {
         const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 12, 8), tubeMat);
         tube.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI);
         cytoGroup.add(tube);
       }
-      
-      // Ribosomes
-      const riboMat = new THREE.MeshPhysicalMaterial({ color: 0xc084fc, emissive: 0x7e22ce, emissiveIntensity: 1 });
-      for(let i=0; i<30; i++) {
+      const riboMat = new THREE.MeshBasicMaterial({ color: 0xc084fc });
+      for(let i=0; i<20; i++) {
         const ribo = new THREE.Mesh(new THREE.SphereGeometry(0.4, 8, 8), riboMat);
         ribo.position.set((Math.random()-0.5)*10, (Math.random()-0.5)*10, (Math.random()-0.5)*10);
         cytoGroup.add(ribo);
       }
-      
       scene.add(cytoGroup);
       organelles.cytoskeleton = { group: cytoGroup, mesh: cytoGroup.children[0], camPos: new THREE.Vector3(15, 18, 8) };
     }
@@ -604,27 +375,20 @@
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
-        composer.setSize(window.innerWidth, window.innerHeight);
       });
 
       const domElem = renderer.domElement;
-      
-      // Handle clicks vs drags
       let downPos = { x: 0, y: 0 };
       domElem.addEventListener('pointerdown', (e) => { downPos = { x: e.clientX, y: e.clientY }; });
       domElem.addEventListener('pointerup', (e) => {
-        if (Math.hypot(e.clientX - downPos.x, e.clientY - downPos.y) < 5) {
-          onClick(e);
-        }
+        if (Math.hypot(e.clientX - downPos.x, e.clientY - downPos.y) < 5) onClick(e);
       });
-
       domElem.addEventListener('pointermove', onPointerMove);
     }
 
     function onPointerMove(e) {
       mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-      
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObjects(scene.children, true);
 
@@ -638,24 +402,17 @@
       }
 
       if (newHovered !== hoveredObj) {
-        if (hoveredObj) {
-          hoveredObj.mesh.material.emissiveIntensity = hoveredObj.mesh.material.userData ? hoveredObj.mesh.material.userData.origEmissive : 0.5;
-        }
+        if (hoveredObj) hoveredObj.mesh.material.emissiveIntensity = 1.0;
         hoveredObj = newHovered;
         if (hoveredObj) {
-          if (!hoveredObj.mesh.material.userData) hoveredObj.mesh.material.userData = {};
-          hoveredObj.mesh.material.userData.origEmissive = hoveredObj.mesh.material.emissiveIntensity || 0.5;
-          hoveredObj.mesh.material.emissiveIntensity = 2.0;
+          hoveredObj.mesh.material.emissiveIntensity = 2.5;
           document.body.style.cursor = 'pointer';
-        } else {
-          document.body.style.cursor = 'grab';
-        }
+        } else document.body.style.cursor = 'grab';
       }
     }
 
     function onClick(e) {
       if (activeTarget || isTransitioning) return;
-      
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObjects(scene.children, true);
 
@@ -663,10 +420,7 @@
         let obj = intersects[0].object;
         while (obj.parent && obj.parent !== scene) obj = obj.parent;
         for (let key in organelles) {
-          if (organelles[key].group === obj) {
-            flyToOrganelle(key);
-            break;
-          }
+          if (organelles[key].group === obj) { flyToOrganelle(key); break; }
         }
       }
     }
@@ -674,57 +428,75 @@
     function flyToOrganelle(key) {
       const organelle = organelles[key];
       if (!organelle) return;
-
-      activeTarget = key;
-      isTransitioning = true;
-      
-      targetCamPos.copy(organelle.group.position).add(organelle.camPos);
-      targetLookAt.copy(organelle.group.position);
-
-      // Disable controls while animating
+      activeTarget = key; isTransitioning = true;
       controls.enabled = false;
-
-      setTimeout(() => {
-        openHUDModal(key);
-        isTransitioning = false;
-        controls.target.copy(targetLookAt); // Update orbit target
-        controls.enabled = true;
-      }, 1000);
+      
+      // Animate camera
+      const startPos = camera.position.clone();
+      const targetPos = organelle.group.position.clone().add(organelle.camPos);
+      const startLook = controls.target.clone();
+      const targetLook = organelle.group.position.clone();
+      
+      let progress = 0;
+      function animateCamera() {
+        progress += 0.03;
+        if (progress >= 1) {
+          camera.position.copy(targetPos);
+          controls.target.copy(targetLook);
+          controls.enabled = true;
+          isTransitioning = false;
+          openHUDModal(key);
+          return;
+        }
+        // Smooth ease-in-out
+        const ease = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+        camera.position.lerpVectors(startPos, targetPos, ease);
+        controls.target.lerpVectors(startLook, targetLook, ease);
+        requestAnimationFrame(animateCamera);
+      }
+      animateCamera();
     }
 
     function resetCameraView() {
-      activeTarget = null;
-      isTransitioning = true;
+      activeTarget = null; isTransitioning = true;
       controls.enabled = false;
       
-      targetCamPos.set(0, 0, 45);
-      targetLookAt.set(0, 0, 0);
-
-      closeHUDModal();
-
-      setTimeout(() => {
-        isTransitioning = false;
-        controls.target.copy(targetLookAt);
-        controls.enabled = true;
-      }, 1000);
+      const startPos = camera.position.clone();
+      const targetPos = new THREE.Vector3(0, 0, 45);
+      const startLook = controls.target.clone();
+      const targetLook = new THREE.Vector3(0, 0, 0);
+      
+      let progress = 0;
+      function animateReset() {
+        progress += 0.04;
+        if (progress >= 1) {
+          camera.position.copy(targetPos);
+          controls.target.copy(targetLook);
+          controls.enabled = true;
+          isTransitioning = false;
+          closeHUDModal();
+          return;
+        }
+        const ease = progress < 0.5 ? 2 * progress * progress : 1 - Math.pow(-2 * progress + 2, 2) / 2;
+        camera.position.lerpVectors(startPos, targetPos, ease);
+        controls.target.lerpVectors(startLook, targetLook, ease);
+        requestAnimationFrame(animateReset);
+      }
+      animateReset();
     }
 
     function openHUDModal(key) {
       const data = CELL_DATA[key];
       if (!data) return;
-
       document.getElementById('modal-title').textContent = data.title;
       document.getElementById('modal-subtitle').textContent = data.subtitle;
       document.getElementById('modal-body').innerHTML = data.content;
       document.getElementById('modal-icon').className = `fa-solid ${data.icon}`;
       document.getElementById('modal-status').textContent = data.status;
-
       const container = document.getElementById('modal-icon-container');
       container.className = `w-12 h-12 rounded-xl flex items-center justify-center text-xl ${data.bgClass} ${data.colorClass} border ${data.borderClass}`;
-
       const card = document.getElementById('hud-card');
       card.className = `pointer-events-auto relative w-full max-w-4xl max-h-[85vh] glass-panel rounded-3xl p-6 md:p-8 flex flex-col justify-between overflow-hidden border ${data.borderClass} shadow-2xl transition-all`;
-
       const modal = document.getElementById('hud-modal');
       modal.classList.remove('pointer-events-none', 'opacity-0', 'scale-95');
       modal.classList.add('opacity-100', 'scale-100');
@@ -740,21 +512,14 @@
       for (let key in organelles) {
         const tooltip = document.getElementById(`tooltip-${key}`);
         if (!tooltip) continue;
-
         if (activeTarget) { tooltip.style.opacity = '0'; continue; }
-
         const vec = new THREE.Vector3();
         organelles[key].group.getWorldPosition(vec);
-        vec.y += 8; // Lift above organelle
+        vec.y += 8;
         vec.project(camera);
-
         if (vec.z > 1) { tooltip.style.opacity = '0'; continue; }
-
-        const x = (vec.x * 0.5 + 0.5) * window.innerWidth;
-        const y = -(vec.y * 0.5) + 0.5 * window.innerHeight;
-
-        tooltip.style.left = `${x}px`;
-        tooltip.style.top = `${y}px`;
+        tooltip.style.left = `${(vec.x * 0.5 + 0.5) * window.innerWidth}px`;
+        tooltip.style.top = `${(-(vec.y * 0.5) + 0.5) * window.innerHeight}px`;
         tooltip.style.opacity = '1';
       }
     }
@@ -763,27 +528,15 @@
     function animate() {
       requestAnimationFrame(animate);
       time += 0.005;
-
-      // Animations
       if (organelles.nucleus) organelles.nucleus.group.rotation.y = time * 0.2;
       if (organelles.mitochondria) organelles.mitochondria.group.rotation.y = time * 0.3;
       if (organelles.golgi) organelles.golgi.group.rotation.y = Math.sin(time) * 0.1;
       if (organelles.cytoskeleton) organelles.cytoskeleton.group.rotation.x = time * 0.1;
-
-      if (cytosolParticles) {
-        cytosolParticles.rotation.y = time * 0.02;
-      }
-
-      // Camera Smooth Fly-to
-      if (isTransitioning || activeTarget) {
-        camera.position.lerp(targetCamPos, 0.05);
-        controls.target.lerp(targetLookAt, 0.05);
-      }
-
+      if (cytosolParticles) cytosolParticles.rotation.y = time * 0.02;
       controls.update();
       updateTooltips();
-      composer.render();
+      renderer.render(scene, camera);
     }
   </script>
 </body>
-</html>
+  </html>
