@@ -25,7 +25,6 @@
     }
     .glow-orb { position: fixed; border-radius: 50%; filter: blur(100px); opacity: 0.15; z-index: 0; pointer-events: none; }
 
-    /* Floating Enter Cell Button */
     #enter-cell-btn {
       position: fixed; bottom: 32px; right: 32px; z-index: 100;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -123,9 +122,9 @@
           Independent researcher with an MSc in Molecular Genetics and hands-on expertise spanning molecular biology, bioinformatics, and quantitative data analysis. Proven track record in executing wet-lab techniques (DNA extraction, PCR, cell culture) and applying computational tools (R, Python, SPSS) to extract data-driven insights from complex biological systems.
         </p>
         <p class="text-slate-400 leading-relaxed mb-6">
-          Highly adept at synthesizing scientific literature, executing hypothesis-driven projects, and managing multi-institutional research collaborations. Developer of <strong class="text-white">GenomicsOps</strong>, a strength-aware ACMG/AMP variant classification engine, and first author of the SIMALR lncRNA paper characterizing a novel non-coding transcript at the 6q23/TNFAIP3 Type 1 Diabetes risk locus.
+          Highly adept at synthesizing scientific literature, executing hypothesis-driven projects, and managing multi-institutional research collaborations. Developer of <strong class="text-white">GenomicsOps</strong>, a strength-aware ACMG/AMP variant classification engine.
         </p>
-        <div class="grid grid-cols-2 gap-4 font-mono text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 font-mono text-xs">
           <div class="p-3 border border-slate-800 rounded">
             <div class="text-cyan-400 mb-1">DEGREE</div>
             <div class="text-slate-300">M.Sc. Molecular Genetics</div>
@@ -145,27 +144,27 @@
       <div class="h-px w-8 bg-amber-500"></div>
       <span class="font-mono text-xs tracking-widest text-amber-400 uppercase">02 / Research Focus</span>
     </div>
-    <h2 class="font-serif text-4xl mb-8">The Dark Genome at 6q23.</h2>
+    <h2 class="font-serif text-4xl mb-8">Psychological Stress & T1D Pathogenesis.</h2>
     <div class="grid md:grid-cols-2 gap-6 mb-8">
       <div class="p-6 border border-slate-800 rounded-2xl">
-        <div class="font-mono text-xs text-amber-400 mb-2">TARGET LOCUS</div>
-        <p class="text-slate-400 text-sm">chr6:137,943,079 - 137,957,657 (hg38). Located 59 kb from the rs6920220 T1D risk variant.</p>
+        <div class="font-mono text-xs text-amber-400 mb-2">GUT ARM</div>
+        <p class="text-slate-400 text-sm">Chronic stress induces a TLR4/NF-κB module (Reg3b +5.18, Reg3g +3.79) inversely coupled to tight-junction genes (Ocln, Cldn15).</p>
       </div>
       <div class="p-6 border border-slate-800 rounded-2xl">
-        <div class="font-mono text-xs text-amber-400 mb-2">EXPRESSION</div>
-        <p class="text-slate-400 text-sm">SIMALR induced in 19/19 primary human islet donors. Absent in Type 2 Diabetic islets.</p>
+        <div class="font-mono text-xs text-amber-400 mb-2">ISLET ARM</div>
+        <p class="text-slate-400 text-sm">LPS-treated NOD β-cells mount a TRIF-selective response (Cxcl10 +1.46, Irf7 +1.95) but fail to induce CCL2/3/4.</p>
       </div>
       <div class="p-6 border border-slate-800 rounded-2xl">
-        <div class="font-mono text-xs text-amber-400 mb-2">HLA BINDING</div>
-        <p class="text-slate-400 text-sm">23 predicted strong binders. Four DQ8 and one DRB1*03:01 core confirmed.</p>
+        <div class="font-mono text-xs text-amber-400 mb-2">INTEGRATION</div>
+        <p class="text-slate-400 text-sm">A 41-gene stress-hormone core sits at the apex of the human T1D islet signature (NES = -1.73, padj = 0.0054).</p>
       </div>
       <div class="p-6 border border-slate-800 rounded-2xl">
-        <div class="font-mono text-xs text-amber-400 mb-2">CELL TYPE</div>
-        <p class="text-slate-400 text-sm">Macrophage restricted. Detectable in 727 of 376,996 resting PBMCs.</p>
+        <div class="font-mono text-xs text-amber-400 mb-2">MECHANISMS RULED OUT</div>
+        <p class="text-slate-400 text-sm">Monocyte stress transcriptome, thymic AIRE suppression, and antibiotic models failed cross-cohort replication.</p>
       </div>
     </div>
     <p class="text-slate-400 leading-relaxed">
-      More than 60 non-HLA risk loci are associated with Type 1 Diabetes, but the causal transcripts remain hidden. We identified <strong class="text-white">SIMALR</strong>, a macrophage-restricted lncRNA that is induced by cytokines in every donor tested and encodes micropeptides predicted to bind the T1D-associated HLA class II alleles DQ8 and DRB1*03:01 — with zero sequence similarity to any known beta-cell autoantigen.
+      This project tests whether psychological stress contributes to T1D pathogenesis across five mechanistic dimensions using public GEO data. The integrated model proposes: stress disrupts the colonic barrier, LPS reaches β-cells eliciting CXCL10 without CCL2, T-cells are recruited and release IL-1β/IFN-γ, which unlocks CCL2 for myeloid amplification.
     </p>
   </section>
 
@@ -204,17 +203,19 @@
     </div>
     <h2 class="font-serif text-4xl mb-4">GenomicsOps</h2>
     <p class="text-slate-400 mb-8 max-w-3xl">Offline-first ACMG/AMP variant classification. Strength-aware combining engine with SHA-256 hash-chained auditing. Every classification is reconstructable.</p>
-    <div class="grid grid-cols-3 gap-6 p-6 border border-emerald-500/30 rounded-2xl bg-emerald-950/10">
+    
+    <!-- FIXED GRID FOR MOBILE OVERLAP -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-6 border border-emerald-500/30 rounded-2xl bg-emerald-950/10 text-center sm:text-left">
       <div>
-        <div class="font-mono text-3xl text-emerald-400">95.8%</div>
+        <div class="font-mono text-3xl md:text-4xl text-emerald-400">95.8%</div>
         <div class="font-mono text-[10px] text-slate-400 mt-1 uppercase">Concordance</div>
       </div>
       <div>
-        <div class="font-mono text-3xl text-emerald-400">12,644</div>
+        <div class="font-mono text-3xl md:text-4xl text-emerald-400">12,644</div>
         <div class="font-mono text-[10px] text-slate-400 mt-1 uppercase">Variants</div>
       </div>
       <div>
-        <div class="font-mono text-3xl text-emerald-400">100%</div>
+        <div class="font-mono text-3xl md:text-4xl text-emerald-400">100%</div>
         <div class="font-mono text-[10px] text-slate-400 mt-1 uppercase">Offline</div>
       </div>
     </div>
@@ -255,10 +256,8 @@
     </div>
     <div class="mt-16 font-mono text-[10px] text-slate-600">© 2026 REZA ANVARIPOUR · INDEPENDENT RESEARCHER</div>
   </section>
-
 </div>
 
-<!-- FLOATING STICKY "ENTER CELL" BUTTON -->
 <div id="enter-cell-btn" onclick="enterCell()">
   <i class="fa-solid fa-microscope"></i>
   <span>Enter<br>Cell</span>
@@ -272,9 +271,9 @@
     <div class="pointer-events-auto hidden md:flex items-center space-x-1 bg-slate-900/80 backdrop-blur-md p-1.5 rounded-full border border-slate-700/50 text-[11px] shadow-lg">
       <button onclick="flyTo('nucleus')" class="px-3 py-1.5 rounded-full text-slate-300 hover:text-cyan-300 hover:bg-slate-800 transition">About</button>
       <button onclick="flyTo('golgi')" class="px-3 py-1.5 rounded-full text-slate-300 hover:text-amber-300 hover:bg-slate-800 transition">Focus</button>
-      <button onclick="flyTo('ribosomes')" class="px-3 py-1.5 rounded-full text-slate-300 hover:text-pink-300 hover:bg-slate-800 transition">Publications</button>
+      <button onclick="flyTo('ribosomes')" class="px-3 py-1.5 rounded-full text-slate-300 hover:text-pink-300 hover:bg-slate-800 transition">Papers</button>
       <button onclick="flyTo('mitochondria')" class="px-3 py-1.5 rounded-full text-slate-300 hover:text-emerald-300 hover:bg-slate-800 transition">Software</button>
-      <button onclick="flyTo('lysosome')" class="px-3 py-1.5 rounded-full text-slate-300 hover:text-fuchsia-300 hover:bg-slate-800 transition">Aspiration</button>
+      <button onclick="flyTo('lysosome')" class="px-3 py-1.5 rounded-full text-slate-300 hover:text-fuchsia-300 hover:bg-slate-800 transition">Goal</button>
       <button onclick="flyTo('cytoskeleton')" class="px-3 py-1.5 rounded-full text-slate-300 hover:text-violet-300 hover:bg-slate-800 transition">Skills</button>
     </div>
     <div class="pointer-events-auto flex items-center space-x-2">
@@ -343,7 +342,6 @@
         </div>
         <h4 class="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-3">Professional Summary</h4>
         <p class="text-slate-400 mb-4">Detail-oriented Molecular Genetics Researcher with an MSc and hands-on expertise spanning molecular biology, bioinformatics, and quantitative data analysis. Proven track record in executing wet-lab techniques (DNA extraction, PCR, cell culture) and applying computational tools (R, Python, SPSS) to extract data-driven insights from complex biological systems.</p>
-        <p class="text-slate-400 mb-6">Highly adept at synthesizing scientific literature, executing hypothesis-driven projects, and managing multi-institutional research collaborations aimed at understanding genetic diseases.</p>
         <h4 class="text-sm font-bold text-cyan-400 uppercase tracking-wider mb-3">Education</h4>
         <div class="space-y-3 mb-6">
           <div class="p-3 bg-slate-800/40 rounded-lg border border-slate-700/50">
@@ -369,32 +367,29 @@
       icon: "fa-layer-group",
       color: "text-amber-400", bg: "bg-amber-500/20", border: "border-amber-500/30",
       content: `
-        <h4 class="text-sm font-bold text-amber-400 uppercase tracking-wider mb-3">SIMALR at the 6q23 Locus</h4>
-        <p class="text-slate-400 mb-4">More than 60 non-HLA risk loci are associated with Type 1 Diabetes, but most map to non-coding sequence and their causal transcripts remain unresolved. The 6q23 locus harboring <strong class="text-white">TNFAIP3</strong> carries one of the strongest non-HLA T1D signals, tagged by rs6920220 — yet neither the causal transcript nor the cell type through which it acts has been identified.</p>
-        <p class="text-slate-400 mb-6">We identified <strong class="text-white">SIMALR</strong> (LINC02528), a macrophage-restricted lncRNA mapping 59 kb from the risk variant.</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-          <div class="p-3 bg-slate-800/40 rounded-lg border border-slate-700/50">
-            <div class="font-mono text-[10px] text-amber-400 mb-1">INDUCTION</div>
-            <div class="text-xs text-slate-300">19/19 donors (+5.06 log2FC, padj 2.9e-45)</div>
+        <h4 class="text-sm font-bold text-amber-400 uppercase tracking-wider mb-3">Psychological Stress & T1D Pathogenesis</h4>
+        <p class="text-slate-400 mb-4">This project asked whether psychological stress contributes to Type 1 Diabetes pathogenesis and tested that question across five mechanistic dimensions using only public GEO data, producing a staged three-layer model with direct evidence at each layer.</p>
+        
+        <div class="space-y-3 mb-6">
+          <div class="p-3 bg-slate-800/40 rounded-lg border-l-2 border-amber-500">
+            <div class="text-white font-semibold text-sm mb-1">1. The Gut Arm</div>
+            <p class="text-xs text-slate-400 mb-2">Chronic social defeat stress (GSE196614) induced a TLR4/NF-κB module (Reg3b +5.18, Reg3g +3.79) tightly co-regulated and inversely coupled to tight-junction genes Ocln and Cldn15 (r = -0.944, p = 3.97×10⁻⁵).</p>
           </div>
-          <div class="p-3 bg-slate-800/40 rounded-lg border border-slate-700/50">
-            <div class="font-mono text-[10px] text-amber-400 mb-1">T2D SPECIFICITY</div>
-            <div class="text-xs text-slate-300">Absent in 58 ND + 27 T2D islets</div>
+          <div class="p-3 bg-slate-800/40 rounded-lg border-l-2 border-amber-500">
+            <div class="text-white font-semibold text-sm mb-1">2. The Islet Arm</div>
+            <p class="text-xs text-slate-400 mb-2">LPS-treated NOD β-cells (GSE218698) mounted a TRIF-selective response (Cxcl10 +1.46, Irf7 +1.95), but Ccl2/3/4 were zero counts in all ten samples. Cytokine stimulation (IL-1β/IFN-γ) proves CCL2 is inducible, but specifically *not* by TLR4.</p>
           </div>
-          <div class="p-3 bg-slate-800/40 rounded-lg border border-slate-700/50">
-            <div class="font-mono text-[10px] text-amber-400 mb-1">REGULATION</div>
-            <div class="text-xs text-slate-300">NF-κB and STAT3 binding sites</div>
-          </div>
-          <div class="p-3 bg-slate-800/40 rounded-lg border border-slate-700/50">
-            <div class="font-mono text-[10px] text-amber-400 mb-1">HLA BINDING</div>
-            <div class="text-xs text-slate-300">23 strong class II binders predicted</div>
+          <div class="p-3 bg-slate-800/40 rounded-lg border-l-2 border-amber-500">
+            <div class="text-white font-semibold text-sm mb-1">3. Integration</div>
+            <p class="text-xs text-slate-400 mb-2">Glucocorticoid and adrenergic signatures identified a 41-gene core (RBP4, SLC2A2, etc.) at the apex of the human T1D islet signature (fgsea NES = -1.73, padj = 0.0054).</p>
           </div>
         </div>
-        <h4 class="text-sm font-bold text-amber-400 uppercase tracking-wider mb-3">Peptide Antigen Discovery</h4>
-        <p class="text-slate-400 mb-4">We scanned all open reading frames of SIMALR and scored 738 unique 15-mers against DQ8, DQ2.5, DRB1*03:01, and DRB1*04:01. Twenty-three peptides were strong binders with 14 unique binding cores. Four DQ8 and one DRB1*03:01 binder were confirmed by NetMHCIIpan with identical binding cores. Zero 7-, 8-, or 9-mers shared with any of 1,964 known T1D autoantigen epitopes.</p>
-        <p class="text-slate-400 mb-6">This raises the possibility that T-cell reactivity in T1D includes a non-beta-cell component: cytokine-activated islet macrophages upregulate SIMALR, produce micropeptides presented on HLA class II, and are recognized by CD4+ T cells not reactive against classical beta-cell antigens.</p>
-        <h4 class="text-sm font-bold text-amber-400 uppercase tracking-wider mb-3">Chromatin Architecture</h4>
-        <p class="text-slate-400">Promoter-capture Hi-C in human islets places SIMALR, TNFAIP3, and rs6920220 within a single topologically associating domain (chr6:138,017,057-138,278,582, hg19). SIMALR is flanked by a CTCF boundary at its 3-prime end and an active enhancer II immediately downstream, suggesting an insulated regulatory apparatus.</p>
+
+        <h4 class="text-sm font-bold text-amber-400 uppercase tracking-wider mb-3">The Integrated Model</h4>
+        <p class="text-slate-400 mb-4">Stress disrupts the colonic barrier (Reg3g/TLR4 module). LPS reaching β-cells elicits CXCL10 without CCL2, causing T-cell-restricted recruitment. Recruited T cells release IL-1β/IFN-γ, which unlocks CCL2 and myeloid amplification.</p>
+        
+        <h4 class="text-sm font-bold text-amber-400 uppercase tracking-wider mb-3">Rigorous Bounds</h4>
+        <p class="text-slate-400">Four mechanisms were ruled out with real data (failed cross-cohort replication of monocyte stress, contradicted AIRE suppression, etc.). The decisive test for this hypothesis is a FACS-sorted β-cell prime/rechallenge experiment with E. coli versus B. vulgatus LPS.</p>
       `
     },
     ribosomes: {
@@ -437,7 +432,7 @@
       color: "text-emerald-400", bg: "bg-emerald-500/20", border: "border-emerald-500/30",
       content: `
         <p class="text-slate-400 mb-4">GenomicsOps is a Windows desktop application built around a deterministic, strength-aware ACMG/AMP combining engine. The engine implements the Richards 2015 rules together with ClinGen VCEP strength modifiers and the Tavtigian points-based extension.</p>
-        <div class="grid grid-cols-3 gap-3 mb-6 p-4 border border-emerald-500/30 rounded-xl bg-emerald-950/10">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6 p-4 border border-emerald-500/30 rounded-xl bg-emerald-950/10">
           <div><div class="font-mono text-2xl text-emerald-400">95.8%</div><div class="text-[10px] text-slate-400 uppercase mt-1">Concordance</div></div>
           <div><div class="font-mono text-2xl text-emerald-400">12,644</div><div class="text-[10px] text-slate-400 uppercase mt-1">Variants</div></div>
           <div><div class="font-mono text-2xl text-emerald-400">68.9%</div><div class="text-[10px] text-slate-400 uppercase mt-1">Recall</div></div>
@@ -469,20 +464,19 @@
         </ul>
         <h4 class="text-sm font-bold text-fuchsia-400 uppercase tracking-wider mb-3">The Long-Term Vision</h4>
         <p class="text-slate-400 mb-4">If SIMALR peptides are naturally presented and T-cell reactive, they represent a non-beta-cell antigen class at a shared autoimmune risk locus — one that is absent in T2D. This would reframe the therapeutic search from "protecting beta cells" to "modulating macrophage-antigen presentation," opening new targets for immune therapy.</p>
-          <p class="text-slate-400 mb-6">My broader aspiration is to help translate the dark genome — the 98% of our DNA that doesn't code for protein but harbors most autoimmune risk — into actionable clinical knowledge. There are more than 60 non-HLA risk loci for T1D alone. Most remain uncharacterized. Most have causal transcripts we haven't yet named.</p>
-          <div class="p-4 border-l-2 border-fuchsia-500 bg-slate-800/40 rounded-r-lg">
-            <p class="text-slate-300 italic">"The foundation of autoimmune disease is not visible until we look at what the genome doesn't say — but regulates."</p>
-          </div>
-        `
-      },
-      cytoskeleton: {
-        title: "Skills & Curriculum Vitae",
-        subtitle: "Cytoskeleton • Structural Framework",
-        icon: "fa-code",
-        color: "text-violet-400", bg: "bg-violet-500/20", border: "border-violet-500/30",
-        content: `
-          <h4 class="text-sm font-bold text-violet-400 uppercase tracking-wider mb-3">Education</h4>
-          <div class="space-y-3 mb-6">
+        <div class="p-4 border-l-2 border-fuchsia-500 bg-slate-800/40 rounded-r-lg">
+          <p class="text-slate-300 italic">"The foundation of autoimmune disease is not visible until we look at what the genome doesn't say — but regulates."</p>
+        </div>
+      `
+    },
+    cytoskeleton: {
+      title: "Skills & Curriculum Vitae",
+      subtitle: "Cytoskeleton • Structural Framework",
+      icon: "fa-code",
+      color: "text-violet-400", bg: "bg-violet-500/20", border: "border-violet-500/30",
+      content: `
+        <h4 class="text-sm font-bold text-violet-400 uppercase tracking-wider mb-3">Education</h4>
+        <div class="space-y-3 mb-6">
             <div class="p-3 bg-slate-800/40 rounded-lg border-l-2 border-violet-500">
               <div class="text-white font-semibold">M.Sc. Molecular Genetics</div>
               <div class="text-xs text-slate-400">Gonbad Kavous University · 2021-2023</div>
@@ -505,7 +499,6 @@
             <div><div class="flex justify-between text-xs mb-1"><span class="text-slate-300">R (DESeq2, Seurat, visualization)</span><span class="text-violet-400 font-mono">90%</span></div><div class="h-1.5 bg-slate-800 rounded-full"><div class="h-1.5 bg-violet-500 rounded-full" style="width:90%"></div></div></div>
             <div><div class="flex justify-between text-xs mb-1"><span class="text-slate-300">SPSS (Regression, Time-Series)</span><span class="text-violet-400 font-mono">85%</span></div><div class="h-1.5 bg-slate-800 rounded-full"><div class="h-1.5 bg-violet-500 rounded-full" style="width:85%"></div></div></div>
             <div><div class="flex justify-between text-xs mb-1"><span class="text-slate-300">BLAST, Ensembl, IEDB, GTEx</span><span class="text-violet-400 font-mono">85%</span></div><div class="h-1.5 bg-slate-800 rounded-full"><div class="h-1.5 bg-violet-500 rounded-full" style="width:85%"></div></div></div>
-            <div><div class="flex justify-between text-xs mb-1"><span class="text-slate-300">Single-cell RNA-seq processing</span><span class="text-violet-400 font-mono">85%</span></div><div class="h-1.5 bg-slate-800 rounded-full"><div class="h-1.5 bg-violet-500 rounded-full" style="width:85%"></div></div></div>
           </div>
           <h4 class="text-sm font-bold text-violet-400 uppercase tracking-wider mb-3">Molecular & Wet-Lab</h4>
           <ul class="space-y-2 mb-6 text-slate-400 text-sm">
@@ -513,7 +506,6 @@
             <li class="flex gap-2"><i class="fa-solid fa-flask text-violet-400 mt-1 text-xs"></i>Cell culture & sterile technique</li>
             <li class="flex gap-2"><i class="fa-solid fa-flask text-violet-400 mt-1 text-xs"></i>Monoclonal antibody production</li>
             <li class="flex gap-2"><i class="fa-solid fa-flask text-violet-400 mt-1 text-xs"></i>Recombinant vaccine design</li>
-            <li class="flex gap-2"><i class="fa-solid fa-flask text-violet-400 mt-1 text-xs"></i>Biochemistry & DNA sequencing / primer design</li>
           </ul>
           <h4 class="text-sm font-bold text-violet-400 uppercase tracking-wider mb-3">Certifications</h4>
           <ul class="space-y-2 text-slate-400 text-sm">
@@ -521,14 +513,7 @@
             <li class="flex gap-2"><i class="fa-solid fa-certificate text-violet-400 mt-1 text-xs"></i>Monoclonal Antibody Production Workshop — ICB Congress</li>
             <li class="flex gap-2"><i class="fa-solid fa-certificate text-violet-400 mt-1 text-xs"></i>Vaccine Platforms Course — Razi Vaccine & Serum Research Institute</li>
             <li class="flex gap-2"><i class="fa-solid fa-certificate text-violet-400 mt-1 text-xs"></i>Python Programming for Bioinformatics — Bioinformatics Camp</li>
-            <li class="flex gap-2"><i class="fa-solid fa-certificate text-violet-400 mt-1 text-xs"></i>SPSS Statistical Analysis — ICB Congress</li>
           </ul>
-          <h4 class="text-sm font-bold text-violet-400 uppercase tracking-wider mb-3 mt-6">Languages</h4>
-          <div class="flex flex-wrap gap-2">
-            <span class="px-3 py-1 bg-slate-800 border border-slate-700 rounded text-xs">English (Native/Professional)</span>
-            <span class="px-3 py-1 bg-slate-800 border border-slate-700 rounded text-xs">Farsi (Native)</span>
-            <span class="px-3 py-1 bg-slate-800 border border-slate-700 rounded text-xs">Arabic (Conversational)</span>
-          </div>
         `
       }
     };
@@ -560,6 +545,7 @@
     let scene, camera, renderer, controls, raycaster, mouse;
     let organelles = {};
     let membrane, particles;
+    let ambientOrganelles = [];
     let hovered = null, activeTarget = null, transitioning = false;
     let tweenHandle = null;
     const DEFAULT_POS = new THREE.Vector3(0, 5, 60);
@@ -604,19 +590,110 @@
       const L1 = new THREE.PointLight(0x06b6d4, 2.5, 150); scene.add(L1);
       const L2 = new THREE.PointLight(0x10b981, 2.0, 100); L2.position.set(-40, 30, 30); scene.add(L2);
       const L3 = new THREE.PointLight(0x8b5cf6, 1.8, 100); L3.position.set(40, -30, -30); scene.add(L3);
+      
       buildCell();
+      buildAmbientOrganelles(); // New function for non-clickable 7 organelles
       setupEvents();
       animate();
     }
 
+    function buildAmbientOrganelles() {
+      // 7. Smooth ER (SER) - cyan tubular network
+      const serGroup = new THREE.Group();
+      const serMat = new THREE.MeshBasicMaterial({ color: 0x0891b2, transparent: true, opacity: 0.4 });
+      for(let i=0; i<10; i++) {
+        const pts = [];
+        let x = (Math.random()-0.5)*50, y = (Math.random()-0.5)*50, z = (Math.random()-0.5)*50;
+        for(let j=0; j<8; j++) {
+          x += (Math.random()-0.5)*10; y += (Math.random()-0.5)*10; z += (Math.random()-0.5)*10;
+          pts.push(new THREE.Vector3(x,y,z));
+        }
+        serGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 20, 0.15, 4, false), serMat));
+      }
+      scene.add(serGroup);
+      ambientOrganelles.push({ group: serGroup, speed: 0.02 });
+
+      // 8. Peroxisomes - small orange spheres with glowing cores
+      const perGroup = new THREE.Group();
+      for(let i=0; i<15; i++) {
+        const per = new THREE.Mesh(new THREE.IcosahedronGeometry(0.8, 1), new THREE.MeshPhongMaterial({ color: 0xf97316, emissive: 0x9a3412, emissiveIntensity: 0.8, transparent: true, opacity: 0.8 }));
+        per.position.set((Math.random()-0.5)*80, (Math.random()-0.5)*80, (Math.random()-0.5)*80);
+        perGroup.add(per);
+      }
+      scene.add(perGroup);
+      ambientOrganelles.push({ group: perGroup, speed: 0.05 });
+
+      // 9. Vacuoles - large translucent spheres
+      const vacGroup = new THREE.Group();
+      for(let i=0; i<4; i++) {
+        const vac = new THREE.Mesh(new THREE.SphereGeometry(6 + Math.random()*4, 32, 32), new THREE.MeshPhongMaterial({ color: 0x475569, transparent: true, opacity: 0.15, shininess: 100, side: THREE.DoubleSide }));
+        vac.position.set((Math.random()-0.5)*60, (Math.random()-0.5)*60, (Math.random()-0.5)*60);
+        vacGroup.add(vac);
+      }
+      scene.add(vacGroup);
+      ambientOrganelles.push({ group: vacGroup, speed: 0.01 });
+
+      // 10. Centrioles - two perpendicular cylinders
+      const cenGroup = new THREE.Group();
+      const cenMat = new THREE.MeshPhongMaterial({ color: 0x94a3b8, shininess: 100 });
+      for(let i=0; i<9; i++) { // 9 triplets
+        const triplet = new THREE.Group();
+        for(let j=0; j<3; j++) {
+          const tub = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 4, 8), cenMat);
+          tub.position.set(Math.cos(j*Math.PI*2/3)*0.8, 0, Math.sin(j*Math.PI*2/3)*0.8);
+          triplet.add(tub);
+        }
+        cenGroup.add(triplet);
+      }
+      const cen2 = cenGroup.clone();
+      cen2.rotation.z = Math.PI/2;
+      cen2.position.y = 2.5;
+      cenGroup.add(cen2);
+      cenGroup.position.set(-30, 25, -20);
+      scene.add(cenGroup);
+      ambientOrganelles.push({ group: cenGroup, speed: 0.1 });
+
+      // 11. Secretory Vesicles - yellow spheres near Golgi
+      const secGroup = new THREE.Group();
+      for(let i=0; i<10; i++) {
+        const sec = new THREE.Mesh(new THREE.SphereGeometry(0.6, 12, 12), new THREE.MeshPhongMaterial({ color: 0xfde047, emissive: 0xca8a04, emissiveIntensity: 0.5 }));
+        sec.position.set(24 + (Math.random()-0.5)*15, 16 + (Math.random()-0.5)*15, -10 + (Math.random()-0.5)*15);
+        secGroup.add(sec);
+      }
+      scene.add(secGroup);
+      ambientOrganelles.push({ group: secGroup, speed: 0.08 });
+
+      // 12. Autophagosomes - double membrane spheres
+      const autoGroup = new THREE.Group();
+      for(let i=0; i<6; i++) {
+        const auto = new THREE.Group();
+        auto.add(new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 16), new THREE.MeshBasicMaterial({ color: 0x14532d, wireframe: true, transparent: true, opacity: 0.6 })));
+        auto.add(new THREE.Mesh(new THREE.SphereGeometry(1.2, 16, 16), new THREE.MeshBasicMaterial({ color: 0x22c55e, wireframe: true, transparent: true, opacity: 0.4 })));
+        auto.position.set((Math.random()-0.5)*70, (Math.random()-0.5)*70, (Math.random()-0.5)*70);
+        autoGroup.add(auto);
+      }
+      scene.add(autoGroup);
+      ambientOrganelles.push({ group: autoGroup, speed: 0.04 });
+
+      // 13. Free Ribosomes - tiny dots scattered
+      const freeRiboGroup = new THREE.Group();
+      const rGeo = new THREE.SphereGeometry(0.12, 6, 6);
+      const rMat = new THREE.MeshBasicMaterial({ color: 0xe879f9 });
+      for(let i=0; i<200; i++) {
+        const r = new THREE.Mesh(rGeo, rMat);
+        r.position.set((Math.random()-0.5)*100, (Math.random()-0.5)*100, (Math.random()-0.5)*100);
+        freeRiboGroup.add(r);
+      }
+      scene.add(freeRiboGroup);
+      ambientOrganelles.push({ group: freeRiboGroup, speed: 0.03 });
+    }
+
     function buildCell() {
-      // Membrane
       const memGeo = organicSphere(55, 3, 0.03, 0.03);
       membrane = new THREE.Mesh(memGeo, new THREE.MeshPhongMaterial({ color: 0x1e3a8a, emissive: 0x1e40af, emissiveIntensity: 0.15, transparent: true, opacity: 0.08, side: THREE.BackSide, shininess: 30 }));
       scene.add(membrane);
       scene.add(new THREE.Mesh(new THREE.IcosahedronGeometry(55, 2), new THREE.MeshBasicMaterial({ color: 0x1e40af, wireframe: true, transparent: true, opacity: 0.06 })));
 
-      // Particles
       const pGeo = new THREE.BufferGeometry();
       const pPos = new Float32Array(900 * 3);
       const pCol = new Float32Array(900 * 3);
@@ -631,200 +708,91 @@
       particles = new THREE.Points(pGeo, new THREE.PointsMaterial({ size: 0.55, vertexColors: true, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }));
       scene.add(particles);
 
-      // ===== 1. NUCLEUS with nuclear pores & nucleolus =====
+      // 1. NUCLEUS
       const nucGroup = new THREE.Group();
-      // Outer envelope (translucent)
-      const env = new THREE.Mesh(organicSphere(12, 4, 0.03, 0.15), new THREE.MeshPhongMaterial({
-        color: 0x0ea5e9, emissive: 0x0284c7, emissiveIntensity: 0.5, transparent: true, opacity: 0.25, side: THREE.DoubleSide
-      }));
-      nucGroup.add(env);
-      // Inner membrane
-      const innerMem = new THREE.Mesh(new THREE.SphereGeometry(11.4, 40, 40), new THREE.MeshBasicMaterial({
-        color: 0x0891b2, transparent: true, opacity: 0.15, side: THREE.DoubleSide
-      }));
-      nucGroup.add(innerMem);
-      // Nuclear pores (distributed on surface)
+      nucGroup.add(new THREE.Mesh(organicSphere(12, 4, 0.03, 0.15), new THREE.MeshPhongMaterial({ color: 0x0ea5e9, emissive: 0x0284c7, emissiveIntensity: 0.5, transparent: true, opacity: 0.25, side: THREE.DoubleSide })));
+      nucGroup.add(new THREE.Mesh(new THREE.SphereGeometry(11.4, 40, 40), new THREE.MeshBasicMaterial({ color: 0x0891b2, transparent: true, opacity: 0.15, side: THREE.DoubleSide })));
       for (let i = 0; i < 80; i++) {
-        const phi = Math.acos(2 * Math.random() - 1);
-        const theta = Math.random() * Math.PI * 2;
-        const r = 12;
-        const x = r * Math.sin(phi) * Math.cos(theta);
-        const y = r * Math.sin(phi) * Math.sin(theta);
-        const z = r * Math.cos(phi);
+        const phi = Math.acos(2 * Math.random() - 1), theta = Math.random() * Math.PI * 2;
+        const x = 12 * Math.sin(phi) * Math.cos(theta), y = 12 * Math.sin(phi) * Math.sin(theta), z = 12 * Math.cos(phi);
         const pore = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.09, 6, 12), new THREE.MeshBasicMaterial({ color: 0x67e8f9, transparent: true, opacity: 0.9 }));
-        pore.position.set(x, y, z);
-        pore.lookAt(0, 0, 0);
-        nucGroup.add(pore);
+        pore.position.set(x, y, z); pore.lookAt(0, 0, 0); nucGroup.add(pore);
       }
-      // Chromatin fibers
       for (let i = 0; i < 15; i++) {
         const pts = []; let x=0, y=0, z=0;
         for (let j = 0; j < 25; j++) {
           x += (Math.random()-0.5)*2.4; y += (Math.random()-0.5)*2.4; z += (Math.random()-0.5)*2.4;
-          const len = Math.sqrt(x*x+y*y+z*z);
-          if (len > 9) { x*=9/len; y*=9/len; z*=9/len; }
+          const len = Math.sqrt(x*x+y*y+z*z); if (len > 9) { x*=9/len; y*=9/len; z*=9/len; }
           pts.push(new THREE.Vector3(x,y,z));
         }
-        const tube = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 80, 0.1, 6, false);
-        nucGroup.add(new THREE.Mesh(tube, new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.7 })));
+        nucGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 80, 0.1, 6, false), new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.7 })));
       }
-      // Nucleolus (dense body)
-      const nucleolus = new THREE.Mesh(organicSphere(3.5, 2, 0.15, 0.4), new THREE.MeshPhongMaterial({
-        color: 0x0369a1, emissive: 0x0c4a6e, emissiveIntensity: 0.8, transparent: true, opacity: 0.85, shininess: 60
-      }));
-      nucleolus.position.set(2, -1, 1);
-      nucGroup.add(nucleolus);
+      const nucleolus = new THREE.Mesh(organicSphere(3.5, 2, 0.15, 0.4), new THREE.MeshPhongMaterial({ color: 0x0369a1, emissive: 0x0c4a6e, emissiveIntensity: 0.8, transparent: true, opacity: 0.85, shininess: 60 }));
+      nucleolus.position.set(2, -1, 1); nucGroup.add(nucleolus);
       scene.add(nucGroup);
       organelles.nucleus = { group: nucGroup, focus: new THREE.Vector3(0, 4, 30) };
 
-      // ===== 2. MITOCHONDRIA with cristae =====
+      // 2. MITOCHONDRIA
       const mitoGroup = new THREE.Group();
-      // Outer membrane (elongated organic sphere)
       const outerGeo = organicSphere(3, 3, 0.08, 0.4); outerGeo.scale(1, 2, 1);
-      mitoGroup.add(new THREE.Mesh(outerGeo, new THREE.MeshPhongMaterial({
-        color: 0x10b981, emissive: 0x047857, emissiveIntensity: 0.4, transparent: true, opacity: 0.35, side: THREE.DoubleSide, shininess: 50
-      })));
-      // Inner membrane with cristae folds (wavy plates)
+      mitoGroup.add(new THREE.Mesh(outerGeo, new THREE.MeshPhongMaterial({ color: 0x10b981, emissive: 0x047857, emissiveIntensity: 0.4, transparent: true, opacity: 0.35, side: THREE.DoubleSide, shininess: 50 })));
       for (let i = 0; i < 8; i++) {
-        const pts = [];
-        for (let j = 0; j <= 20; j++) {
-          const t = j / 20;
-          const yPos = (t - 0.5) * 10;
-          const waveX = Math.sin(t * Math.PI * 4 + i) * 2.2;
-          const waveZ = Math.cos(t * Math.PI * 3 + i) * 2.2;
-          pts.push(new THREE.Vector3(waveX, yPos, waveZ));
-        }
-        const curve = new THREE.CatmullRomCurve3(pts);
-        const crista = new THREE.Mesh(new THREE.TubeGeometry(curve, 50, 0.08, 6, false), new THREE.MeshBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.85 }));
-        mitoGroup.add(crista);
+        const pts = []; for (let j = 0; j <= 20; j++) { const t = j / 20; pts.push(new THREE.Vector3(Math.sin(t * Math.PI * 4 + i) * 2.2, (t - 0.5) * 10, Math.cos(t * Math.PI * 3 + i) * 2.2)); }
+        mitoGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 50, 0.08, 6, false), new THREE.MeshBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.85 })));
       }
-      // Matrix dots
-      for (let i = 0; i < 30; i++) {
-        const dot = new THREE.Mesh(new THREE.SphereGeometry(0.12, 6, 6), new THREE.MeshBasicMaterial({ color: 0x6ee7b7 }));
-        dot.position.set((Math.random()-0.5)*3, (Math.random()-0.5)*8, (Math.random()-0.5)*3);
-        mitoGroup.add(dot);
-      }
-      mitoGroup.position.set(-22, 14, -8);
-      mitoGroup.rotation.set(0.3, 0.8, 0.4);
-      scene.add(mitoGroup);
+      mitoGroup.position.set(-22, 14, -8); mitoGroup.rotation.set(0.3, 0.8, 0.4); scene.add(mitoGroup);
       organelles.mitochondria = { group: mitoGroup, focus: new THREE.Vector3(-22, 22, 22) };
 
-      // ===== 3. GOLGI with stacked cisternae =====
+      // 3. GOLGI
       const golgiGroup = new THREE.Group();
       const gMat = new THREE.MeshPhongMaterial({ color: 0xf59e0b, emissive: 0xb45309, emissiveIntensity: 0.4, side: THREE.DoubleSide, transparent: true, opacity: 0.75, shininess: 40 });
-      // Stacked flattened cisternae
       for (let i = 0; i < 8; i++) {
-        const radius = 3.5 + i * 0.5;
-        const geo = new THREE.TorusGeometry(radius, 0.55, 10, 60, Math.PI * 1.4);
-        const sac = new THREE.Mesh(geo, gMat);
-        sac.rotation.x = Math.PI / 2 + i * 0.08;
-        sac.rotation.y = i * 0.15;
-        sac.position.y = i * 1.1;
-        sac.scale.set(1, 1, 0.35);
-        golgiGroup.add(sac);
+        const sac = new THREE.Mesh(new THREE.TorusGeometry(3.5 + i * 0.5, 0.55, 10, 60, Math.PI * 1.4), gMat);
+        sac.rotation.x = Math.PI / 2 + i * 0.08; sac.rotation.y = i * 0.15; sac.position.y = i * 1.1; sac.scale.set(1, 1, 0.35); golgiGroup.add(sac);
       }
-      // Budding vesicles at edges
-      for (let i = 0; i < 30; i++) {
-        const ves = new THREE.Mesh(new THREE.SphereGeometry(0.15 + Math.random() * 0.2, 8, 8), new THREE.MeshPhongMaterial({
-          color: 0xfbbf24, emissive: 0xf59e0b, emissiveIntensity: 0.9, transparent: true, opacity: 0.9
-        }));
-        const theta = Math.random() * Math.PI * 2;
-        const r = 6 + Math.random() * 3;
-        ves.position.set(Math.cos(theta) * r, (Math.random() - 0.5) * 9, Math.sin(theta) * r);
-        golgiGroup.add(ves);
-      }
-      golgiGroup.position.set(24, 16, -10);
-      scene.add(golgiGroup);
+      golgiGroup.position.set(24, 16, -10); scene.add(golgiGroup);
       organelles.golgi = { group: golgiGroup, focus: new THREE.Vector3(24, 22, 20) };
 
-      // ===== 4. ROUGH ER with ribosomes =====
+      // 4. RIBOSOMES / ROUGH ER
       const riboGroup = new THREE.Group();
-      // Rough ER sheets (curved flat surfaces)
       const erMat = new THREE.MeshPhongMaterial({ color: 0xbe185d, emissive: 0x831843, emissiveIntensity: 0.3, side: THREE.DoubleSide, transparent: true, opacity: 0.6, shininess: 30 });
       for (let s = 0; s < 4; s++) {
-        const sheetGeo = new THREE.PlaneGeometry(10, 6, 20, 12);
-        const pos = sheetGeo.attributes.position;
-        for (let i = 0; i < pos.count; i++) {
-          const x = pos.getX(i);
-          pos.setZ(i, Math.sin(x * 0.8 + s) * 0.5);
-        }
+        const sheetGeo = new THREE.PlaneGeometry(10, 6, 20, 12); const pos = sheetGeo.attributes.position;
+        for (let i = 0; i < pos.count; i++) pos.setZ(i, Math.sin(pos.getX(i) * 0.8 + s) * 0.5);
         sheetGeo.computeVertexNormals();
-        const sheet = new THREE.Mesh(sheetGeo, erMat);
-        sheet.rotation.y = s * 0.6;
-        sheet.position.set(Math.cos(s * 1.2) * 4, s * 1.5, Math.sin(s * 1.2) * 4);
-        riboGroup.add(sheet);
+        const sheet = new THREE.Mesh(sheetGeo, erMat); sheet.rotation.y = s * 0.6; sheet.position.set(Math.cos(s * 1.2) * 4, s * 1.5, Math.sin(s * 1.2) * 4); riboGroup.add(sheet);
       }
-      // Ribosome dots clustered on ER
       const rMat = new THREE.MeshPhongMaterial({ color: 0xf472b6, emissive: 0xdb2777, emissiveIntensity: 1 });
-      for (let i = 0; i < 100; i++) {
-        const r = new THREE.Mesh(new THREE.SphereGeometry(0.15, 6, 6), rMat);
-        r.position.set((Math.random()-0.5)*14, (Math.random()-0.5)*10, (Math.random()-0.5)*8);
-        riboGroup.add(r);
-      }
-      riboGroup.position.set(10, -20, 15);
-      scene.add(riboGroup);
+      for (let i = 0; i < 100; i++) { const r = new THREE.Mesh(new THREE.SphereGeometry(0.15, 6, 6), rMat); r.position.set((Math.random()-0.5)*14, (Math.random()-0.5)*10, (Math.random()-0.5)*8); riboGroup.add(r); }
+      riboGroup.position.set(10, -20, 15); scene.add(riboGroup);
       organelles.ribosomes = { group: riboGroup, focus: new THREE.Vector3(10, -20, 35) };
 
-      // ===== 5. LYSOSOME with enzymes =====
+      // 5. LYSOSOME
       const lysoGroup = new THREE.Group();
       const lMat = new THREE.MeshPhongMaterial({ color: 0xd946ef, emissive: 0x86198f, emissiveIntensity: 0.6, transparent: true, opacity: 0.7, shininess: 100 });
-      const lysoMain = new THREE.Mesh(organicSphere(4, 3, 0.08, 0.3), lMat);
-      lysoGroup.add(lysoMain);
-      // Internal enzyme particles
+      lysoGroup.add(new THREE.Mesh(organicSphere(4, 3, 0.08, 0.3), lMat));
       const eMat = new THREE.MeshBasicMaterial({ color: 0xfdf4ff });
       for (let i = 0; i < 40; i++) {
         const e = new THREE.Mesh(new THREE.SphereGeometry(0.15, 6, 6), eMat);
         e.position.set((Math.random()-0.5)*6, (Math.random()-0.5)*6, (Math.random()-0.5)*6);
-        // Constrain inside lysosome
-        const len = Math.sqrt(e.position.x**2 + e.position.y**2 + e.position.z**2);
-        if (len > 3.5) e.position.multiplyScalar(3.5/len);
-        lysoGroup.add(e);
+        const len = Math.sqrt(e.position.x**2 + e.position.y**2 + e.position.z**2); if (len > 3.5) e.position.multiplyScalar(3.5/len); lysoGroup.add(e);
       }
-      // Slight bumps on surface
-      for (let i = 0; i < 20; i++) {
-        const phi = Math.acos(2 * Math.random() - 1);
-        const theta = Math.random() * Math.PI * 2;
-        const bump = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 8), lMat);
-        bump.position.set(4 * Math.sin(phi) * Math.cos(theta), 4 * Math.sin(phi) * Math.sin(theta), 4 * Math.cos(phi));
-        lysoGroup.add(bump);
-      }
-      lysoGroup.position.set(-25, -15, 10);
-      scene.add(lysoGroup);
+      lysoGroup.position.set(-25, -15, 10); scene.add(lysoGroup);
       organelles.lysosome = { group: lysoGroup, focus: new THREE.Vector3(-25, -15, 30) };
 
-      // ===== 6. CYTOSKELETON (microtubules + actin) =====
+      // 6. CYTOSKELETON
       const cytoGroup = new THREE.Group();
-      // Thick microtubules (large tubes)
       for (let i = 0; i < 12; i++) {
         const start = new THREE.Vector3((Math.random()-0.5)*90, (Math.random()-0.5)*90, (Math.random()-0.5)*90);
         const end = new THREE.Vector3((Math.random()-0.5)*90, (Math.random()-0.5)*90, (Math.random()-0.5)*90);
-        const mid = start.clone().add(end).multiplyScalar(0.5);
-        mid.x += (Math.random()-0.5)*25;
-        const curve = new THREE.CatmullRomCurve3([start, mid, end]);
-        const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 50, 0.15, 6, false), new THREE.MeshBasicMaterial({
-          color: 0x8b5cf6, transparent: true, opacity: 0.6
-        }));
-        cytoGroup.add(tube);
+        const mid = start.clone().add(end).multiplyScalar(0.5); mid.x += (Math.random()-0.5)*25;
+        cytoGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([start, mid, end]), 50, 0.15, 6, false), new THREE.MeshBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.6 })));
       }
-      // Thin actin filaments
       for (let i = 0; i < 20; i++) {
         const start = new THREE.Vector3((Math.random()-0.5)*90, (Math.random()-0.5)*90, (Math.random()-0.5)*90);
         const end = new THREE.Vector3((Math.random()-0.5)*90, (Math.random()-0.5)*90, (Math.random()-0.5)*90);
-        const mid = start.clone().add(end).multiplyScalar(0.5);
-        mid.y += (Math.random()-0.5)*20;
-        const curve = new THREE.CatmullRomCurve3([start, mid, end]);
-        const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 40, 0.05, 4, false), new THREE.MeshBasicMaterial({
-          color: 0xa78bfa, transparent: true, opacity: 0.4
-        }));
-        cytoGroup.add(tube);
-      }
-      // Ribosome dots on filaments
-      for (let i = 0; i < 50; i++) {
-        const dot = new THREE.Mesh(new THREE.SphereGeometry(0.15, 6, 6), new THREE.MeshBasicMaterial({
-          color: 0xc084fc, transparent: true, opacity: 0.8
-        }));
-        dot.position.set((Math.random()-0.5)*80, (Math.random()-0.5)*80, (Math.random()-0.5)*80);
-        cytoGroup.add(dot);
+        const mid = start.clone().add(end).multiplyScalar(0.5); mid.y += (Math.random()-0.5)*20;
+        cytoGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([start, mid, end]), 40, 0.05, 4, false), new THREE.MeshBasicMaterial({ color: 0xa78bfa, transparent: true, opacity: 0.4 })));
       }
       scene.add(cytoGroup);
       organelles.cytoskeleton = { group: cytoGroup, focus: new THREE.Vector3(0, 5, 85) };
@@ -914,12 +882,18 @@
       if (!is3DActive) return;
       requestAnimationFrame(animate);
       const t = (now || 0) * 0.001;
+      
+      // Interactive organelles
       if (organelles.nucleus) { organelles.nucleus.group.rotation.y = t * 0.12; organelles.nucleus.group.scale.setScalar(1 + Math.sin(t * 1.4) * 0.015); }
       if (organelles.mitochondria) organelles.mitochondria.group.rotation.y = t * 0.25;
       if (organelles.golgi) organelles.golgi.group.rotation.y = t * 0.15;
       if (organelles.cytoskeleton) organelles.cytoskeleton.group.rotation.y = t * 0.05;
       if (organelles.ribosomes) organelles.ribosomes.group.rotation.y = t * 0.15;
       if (organelles.lysosome) { organelles.lysosome.group.rotation.y = t * 0.1; organelles.lysosome.group.rotation.x = t * 0.08; }
+      
+      // Ambient organelles
+      ambientOrganelles.forEach(item => { item.group.rotation.y = t * item.speed; item.group.rotation.x = t * item.speed * 0.5; });
+
       if (particles) particles.rotation.y = t * 0.02; if (membrane) membrane.rotation.y = t * 0.01;
       controls.update(); updateTooltips(); renderer.render(scene, camera);
     }
