@@ -55,7 +55,16 @@
 
     #cell-3d-container { opacity: 0; pointer-events: none; transition: opacity 1s ease; position: fixed; inset: 0; z-index: 50; background: #030712; }
     #cell-3d-container.active { opacity: 1; pointer-events: auto; }
-    .organelle-tip { position: absolute; transform: translate(-50%, -100%); background: rgba(15,23,42,0.95); border: 1px solid rgba(6,182,212,0.5); padding: 8px 14px; border-radius: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #67e8f9; text-align: center; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.6); }
+     .organelle-tip { 
+  position: absolute; transform: translate(-50%, -100%); background: rgba(15,23,42,0.95); 
+  border: 1px solid rgba(6,182,212,0.5); padding: 8px 14px; border-radius: 8px; 
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #67e8f9; 
+  text-align: center; white-space: nowrap; opacity: 0; transition: all 0.2s; 
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6); 
+  pointer-events: auto; cursor: pointer; 
+}
+.organelle-tip:hover { background: rgba(30, 41, 59, 1); border-color: #67e8f9; transform: translate(-50%, -105%) scale(1.05); }
+.organelle-tip span { display: block; font-size: 9px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; }
     .organelle-tip span { display: block; font-size: 9px; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 3px; }
 
     ::-webkit-scrollbar { width: 6px; }
@@ -293,14 +302,14 @@
     </div>
   </div>
 
-  <div id="tooltip-container" class="absolute inset-0 pointer-events-none z-10 overflow-hidden">
-    <div id="tip-nucleus" class="organelle-tip border-cyan-500 text-cyan-300">Nucleus <span>(About Reza)</span></div>
-    <div id="tip-golgi" class="organelle-tip border-amber-500 text-amber-300">Golgi Apparatus <span>(Research Focus)</span></div>
-    <div id="tip-ribosomes" class="organelle-tip border-pink-500 text-pink-300">Rough ER + Ribosomes <span>(Publications)</span></div>
-    <div id="tip-mitochondria" class="organelle-tip border-emerald-500 text-emerald-300">Mitochondria <span>(GenomicsOps Software)</span></div>
-    <div id="tip-lysosome" class="organelle-tip border-fuchsia-500 text-fuchsia-300">Lysosome <span>(Aspiration)</span></div>
-    <div id="tip-cytoskeleton" class="organelle-tip border-violet-500 text-violet-300">Cytoskeleton <span>(Skills & CV)</span></div>
-  </div>
+<div id="tooltip-container" class="absolute inset-0 pointer-events-none z-10 overflow-hidden">
+  <div id="tip-nucleus" onclick="flyTo('nucleus')" class="organelle-tip border-cyan-500 text-cyan-300">Nucleus <span>(About Reza)</span></div>
+  <div id="tip-golgi" onclick="flyTo('golgi')" class="organelle-tip border-amber-500 text-amber-300">Golgi Apparatus <span>(Research Focus)</span></div>
+  <div id="tip-ribosomes" onclick="flyTo('ribosomes')" class="organelle-tip border-pink-500 text-pink-300">Rough ER + Ribosomes <span>(Publications)</span></div>
+  <div id="tip-mitochondria" onclick="flyTo('mitochondria')" class="organelle-tip border-emerald-500 text-emerald-300">Mitochondria <span>(GenomicsOps)</span></div>
+  <div id="tip-lysosome" onclick="flyTo('lysosome')" class="organelle-tip border-fuchsia-500 text-fuchsia-300">Lysosome <span>(Aspiration)</span></div>
+  <div id="tip-cytoskeleton" onclick="flyTo('cytoskeleton')" class="organelle-tip border-violet-500 text-violet-300">Cytoskeleton <span>(Skills & CV)</span></div>
+</div>
 
   <div id="hud-modal" class="fixed inset-0 z-30 hidden">
     <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal()"></div>
@@ -450,24 +459,23 @@
       `
     },
     lysosome: {
-      title: "Aspiration",
-      subtitle: "Lysosome • Future Goals",
-      icon: "fa-bullseye",
-      color: "text-fuchsia-400", bg: "bg-fuchsia-500/20", border: "border-fuchsia-500/30",
-      content: `
-        <h4 class="text-sm font-bold text-fuchsia-400 uppercase tracking-wider mb-3">The Immediate Next Steps</h4>
-        <p class="text-slate-400 mb-4">SIMALR is a computational prediction. To move from prediction to clinical reality, the immediate experimental questions are:</p>
-        <ul class="space-y-3 mb-6 text-slate-400">
-          <li class="flex gap-3"><span class="text-fuchsia-400 font-mono text-xs mt-1">01</span><span><strong class="text-white">Targeted immunopeptidomics.</strong> Mass spectrometry on macrophage-enriched islets to detect naturally presented SIMALR peptides on HLA class II.</span></li>
-          <li class="flex gap-3"><span class="text-fuchsia-400 font-mono text-xs mt-1">02</span><span><strong class="text-white">DQ8 tetramer staining.</strong> Synthesize DQ8 tetramers loaded with the top predicted SIMALR peptides and screen T cells from new-onset T1D patients.</span></li>
-          <li class="flex gap-3"><span class="text-fuchsia-400 font-mono text-xs mt-1">03</span><span><strong class="text-white">Larger pre-diabetic cohort.</strong> The current pre-diabetic trend (p=0.053) is based on 3 donors. A larger cohort would establish whether SIMALR detection is a staging biomarker.</span></li>
-        </ul>
-        <h4 class="text-sm font-bold text-fuchsia-400 uppercase tracking-wider mb-3">The Long-Term Vision</h4>
-        <p class="text-slate-400 mb-4">If SIMALR peptides are naturally presented and T-cell reactive, they represent a non-beta-cell antigen class at a shared autoimmune risk locus — one that is absent in T2D. This would reframe the therapeutic search from "protecting beta cells" to "modulating macrophage-antigen presentation," opening new targets for immune therapy.</p>
-        <div class="p-4 border-l-2 border-fuchsia-500 bg-slate-800/40 rounded-r-lg">
-          <p class="text-slate-300 italic">"The foundation of autoimmune disease is not visible until we look at what the genome doesn't say — but regulates."</p>
-        </div>
-      `
+  title: "Aspiration",
+  subtitle: "Lysosome • Future Goals",
+  icon: "fa-bullseye",
+  color: "text-fuchsia-400", bg: "bg-fuchsia-500/20", border: "border-fuchsia-500/30",
+  content: `
+    <h4 class="text-sm font-bold text-fuchsia-400 uppercase tracking-wider mb-3">The Decisive Test</h4>
+    <p class="text-slate-400 mb-4">The psychological stress / T1D pathogenesis model is a rigorously bounded, hypothesis-generating framework. The decisive test is a <strong class="text-white">FACS-sorted β-cell prime/rechallenge experiment</strong> comparing <em>E. coli</em> versus <em>B. vulgatus</em> LPS.</p>
+    <p class="text-slate-400 mb-6">This will prove whether the LPS source gates whether the initial CXCL10 signal is tolerized (<em>E. coli</em>) or accentuated (<em>B. vulgatus</em>), mapping the exact gut-to-islet transport axis.</p>
+    
+    <h4 class="text-sm font-bold text-fuchsia-400 uppercase tracking-wider mb-3">The Long-Term Vision</h4>
+    <p class="text-slate-400 mb-4">If validated, this model reframes the therapeutic search. Instead of solely targeting beta-cell destruction, we can intervene earlier: repairing the colonic barrier, modulating the TLR4/NF-κB module in the gut, or altering the microbiome composition that gates the autoimmune trigger.</p>
+    <p class="text-slate-400 mb-4">My broader aspiration is to bridge the gap between computational genomics and clinical reality. The dark genome and public GEO datasets hold immense hidden value—we just need the right models to decode them.</p>
+    
+    <div class="p-4 border-l-2 border-fuchsia-500 bg-slate-800/40 rounded-r-lg mt-6">
+      <p class="text-slate-300 italic">"To cure autoimmune disease, we must look beyond the target organ to the systemic environmental triggers—the gut, the stress response, and the hidden non-coding genome."</p>
+    </div>
+  `
     },
     cytoskeleton: {
       title: "Skills & Curriculum Vitae",
