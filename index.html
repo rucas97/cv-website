@@ -517,8 +517,8 @@
         `
       }
     };
-  </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script>
     let is3DActive = false;
@@ -548,12 +548,13 @@
     let ambientOrganelles = [];
     let hovered = null, activeTarget = null, transitioning = false;
     let tweenHandle = null;
-    const DEFAULT_POS = new THREE.Vector3(0, 5, 60);
+    const DEFAULT_POS = new THREE.Vector3(0, 10, 65);
     const DEFAULT_LOOK = new THREE.Vector3(0, 0, 0);
 
     function noise(x, y, z) {
       return (Math.sin(x*1.7)*Math.cos(y*1.3)*Math.sin(z*1.9)*0.5 + Math.sin(x*4.1)*Math.cos(y*3.7)*Math.sin(z*4.3)*0.3 + Math.sin(x*8.5)*Math.cos(y*7.1)*Math.sin(z*8.3)*0.15);
     }
+
     function organicSphere(radius, detail, amp, freq) {
       const geo = new THREE.IcosahedronGeometry(radius, detail);
       const pos = geo.attributes.position;
@@ -570,7 +571,7 @@
 
     function init3D() {
       scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x030712, 0.006);
+      scene.fog = new THREE.FogExp2(0x030712, 0.005);
       camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 2000);
       camera.position.copy(DEFAULT_POS);
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -582,223 +583,290 @@
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
       controls.dampingFactor = 0.06;
-      controls.minDistance = 15;
-      controls.maxDistance = 130;
+      controls.minDistance = 10;
+      controls.maxDistance = 150;
       raycaster = new THREE.Raycaster();
       mouse = new THREE.Vector2();
-      scene.add(new THREE.AmbientLight(0x1a2540, 1.5));
-      const L1 = new THREE.PointLight(0x06b6d4, 2.5, 150); scene.add(L1);
-      const L2 = new THREE.PointLight(0x10b981, 2.0, 100); L2.position.set(-40, 30, 30); scene.add(L2);
-      const L3 = new THREE.PointLight(0x8b5cf6, 1.8, 100); L3.position.set(40, -30, -30); scene.add(L3);
+      
+      // Enhanced Lighting for depth
+      scene.add(new THREE.AmbientLight(0x1a2540, 1.2));
+      const L1 = new THREE.PointLight(0x06b6d4, 2.5, 200); scene.add(L1);
+      const L2 = new THREE.PointLight(0x10b981, 2.0, 150); L2.position.set(-50, 40, 40); scene.add(L2);
+      const L3 = new THREE.PointLight(0x8b5cf6, 1.8, 150); L3.position.set(50, -40, -40); scene.add(L3);
+      const L4 = new THREE.PointLight(0xf59e0b, 1.5, 100); L4.position.set(30, 30, 30); scene.add(L4);
       
       buildCell();
-      buildAmbientOrganelles(); // New function for non-clickable 7 organelles
       setupEvents();
       animate();
     }
 
-    function buildAmbientOrganelles() {
-      // 7. Smooth ER (SER) - cyan tubular network
-      const serGroup = new THREE.Group();
-      const serMat = new THREE.MeshBasicMaterial({ color: 0x0891b2, transparent: true, opacity: 0.4 });
-      for(let i=0; i<10; i++) {
-        const pts = [];
-        let x = (Math.random()-0.5)*50, y = (Math.random()-0.5)*50, z = (Math.random()-0.5)*50;
-        for(let j=0; j<8; j++) {
-          x += (Math.random()-0.5)*10; y += (Math.random()-0.5)*10; z += (Math.random()-0.5)*10;
+    function buildCell() {
+      // --- CELL MEMBRANE ---
+      const memGeo = organicSphere(60, 4, 0.02, 0.05);
+      membrane = new THREE.Mesh(memGeo, new THREE.MeshPhongMaterial({ color: 0x1e3a8a, emissive: 0x1e40af, emissiveIntensity: 0.2, transparent: true, opacity: 0.08, side: THREE.BackSide, shininess: 30 }));
+      scene.add(membrane);
+      const wireGeo = new THREE.IcosahedronGeometry(60, 3);
+      scene.add(new THREE.Mesh(wireGeo, new THREE.MeshBasicMaterial({ color: 0x1e40af, wireframe: true, transparent: true, opacity: 0.04 })));
+
+      // --- CYTOSOL PARTICLES ---
+      const pGeo = new THREE.BufferGeometry();
+      const pPos = new Float32Array(1500 * 3);
+      const pCol = new Float32Array(1500 * 3);
+      const c = new THREE.Color();
+      for (let i = 0; i < 1500; i++) {
+        const r = 58 * Math.cbrt(Math.random()), t = Math.random() * Math.PI * 2, p = Math.acos(2*Math.random() - 1);
+        pPos[i*3] = r * Math.sin(p) * Math.cos(t); pPos[i*3+1] = r * Math.sin(p) * Math.sin(t); pPos[i*3+2] = r * Math.cos(p);
+        c.setHSL(0.5 + Math.random()*0.2, 0.7, 0.6); pCol[i*3] = c.r; pCol[i*3+1] = c.g; pCol[i*3+2] = c.b;
+      }
+      pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
+      pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
+      particles = new THREE.Points(pGeo, new THREE.PointsMaterial({ size: 0.4, vertexColors: true, transparent: true, opacity: 0.4, blending: THREE.AdditiveBlending, depthWrite: false }));
+      scene.add(particles);
+
+      // --- 1. NUCLEUS (Interactive) ---
+      const nucGroup = new THREE.Group();
+      // Outer Envelope
+      nucGroup.add(new THREE.Mesh(organicSphere(14, 4, 0.02, 0.1), new THREE.MeshPhongMaterial({ color: 0x0ea5e9, emissive: 0x0284c7, emissiveIntensity: 0.4, transparent: true, opacity: 0.2, side: THREE.DoubleSide })));
+      // Inner Membrane
+      nucGroup.add(new THREE.Mesh(new THREE.SphereGeometry(13.2, 40, 40), new THREE.MeshBasicMaterial({ color: 0x0891b2, transparent: true, opacity: 0.1, side: THREE.DoubleSide })));
+      // Nuclear Pores
+      for (let i = 0; i < 100; i++) {
+        const phi = Math.acos(2 * Math.random() - 1), theta = Math.random() * Math.PI * 2;
+        const x = 14 * Math.sin(phi) * Math.cos(theta), y = 14 * Math.sin(phi) * Math.sin(theta), z = 14 * Math.cos(phi);
+        const pore = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.1, 6, 12), new THREE.MeshBasicMaterial({ color: 0x67e8f9, transparent: true, opacity: 0.8 }));
+        pore.position.set(x, y, z); pore.lookAt(0, 0, 0); nucGroup.add(pore);
+      }
+      // Chromatin Network
+      for (let i = 0; i < 20; i++) {
+        const pts = []; let x=0, y=0, z=0;
+        for (let j = 0; j < 30; j++) {
+          x += (Math.random()-0.5)*2.5; y += (Math.random()-0.5)*2.5; z += (Math.random()-0.5)*2.5;
+          const len = Math.sqrt(x*x+y*y+z*z); if (len > 11) { x*=11/len; y*=11/len; z*=11/len; }
           pts.push(new THREE.Vector3(x,y,z));
         }
-        serGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 20, 0.15, 4, false), serMat));
+        nucGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 100, 0.08, 5, false), new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.5 })));
       }
-      scene.add(serGroup);
-      ambientOrganelles.push({ group: serGroup, speed: 0.02 });
+      // Nucleolus
+      const nucleolus = new THREE.Mesh(organicSphere(4, 3, 0.1, 0.3), new THREE.MeshPhongMaterial({ color: 0x0369a1, emissive: 0x0c4a6e, emissiveIntensity: 1, transparent: true, opacity: 0.9 }));
+      nucleolus.position.set(3, -2, 2); nucGroup.add(nucleolus);
+      scene.add(nucGroup);
+      organelles.nucleus = { group: nucGroup, focus: new THREE.Vector3(0, 5, 35) };
 
-      // 8. Peroxisomes - small orange spheres with glowing cores
-      const perGroup = new THREE.Group();
+      // --- 2. TEXTBOOK ENDOPLASMIC RETICULUM (Wraps Nucleus) ---
+      // We make this a massive, beautiful network that connects to the nucleus
+      const erGroup = new THREE.Group();
+      const erMat = new THREE.MeshPhongMaterial({ color: 0x0891b2, emissive: 0x164e63, emissiveIntensity: 0.5, side: THREE.DoubleSide, transparent: true, opacity: 0.4, shininess: 40 });
+      
+      // Rough ER: Flattened sacs wrapping around the nucleus
       for(let i=0; i<15; i++) {
-        const per = new THREE.Mesh(new THREE.IcosahedronGeometry(0.8, 1), new THREE.MeshPhongMaterial({ color: 0xf97316, emissive: 0x9a3412, emissiveIntensity: 0.8, transparent: true, opacity: 0.8 }));
+        const pts = [];
+        // Generate a spiral path around the nucleus
+        const radius = 16 + Math.random() * 8;
+        const startAngle = Math.random() * Math.PI * 2;
+        const startY = (Math.random() - 0.5) * 20;
+        for(let j=0; j<20; j++) {
+          const angle = startAngle + (j / 20) * Math.PI * 1.5;
+          const y = startY + Math.sin(angle * 2) * 5;
+          pts.push(new THREE.Vector3(Math.cos(angle) * radius, y, Math.sin(angle) * radius));
+        }
+        const curve = new THREE.CatmullRomCurve3(pts);
+        // Create a flattened, ribbon-like sac
+        const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 64, 1.5, 4, false), erMat);
+        tube.scale.set(1, 0.2, 1); // Flatten it
+        erGroup.add(tube);
+      }
+
+      // Smooth ER: Tubular branching network further out
+      const serMat = new THREE.MeshPhongMaterial({ color: 0x06b6d4, emissive: 0x164e63, emissiveIntensity: 0.3, transparent: true, opacity: 0.5 });
+      for(let i=0; i<30; i++) {
+        let x = (Math.random()-0.5)*70, y = (Math.random()-0.5)*70, z = (Math.random()-0.5)*70;
+        const pts = [new THREE.Vector3(x, y, z)];
+        for(let j=0; j<5; j++) {
+          x += (Math.random()-0.5)*15; y += (Math.random()-0.5)*15; z += (Math.random()-0.5)*15;
+          pts.push(new THREE.Vector3(x, y, z));
+        }
+        const curve = new THREE.CatmullRomCurve3(pts);
+        erGroup.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 30, 0.3, 6, false), serMat));
+      }
+      
+      // Ribosomes on Rough ER
+      const riboMat = new THREE.MeshBasicMaterial({ color: 0xf472b6 });
+      for(let i=0; i<300; i++) {
+        const phi = Math.acos(2 * Math.random() - 1), theta = Math.random() * Math.PI * 2;
+        const r = 15 + Math.random() * 12;
+        const dot = new THREE.Mesh(new THREE.SphereGeometry(0.2, 6, 6), riboMat);
+        dot.position.set(r * Math.sin(phi) * Math.cos(theta), r * Math.sin(phi) * Math.sin(theta), r * Math.cos(phi));
+        erGroup.add(dot);
+      }
+      scene.add(erGroup);
+      // ER is ambient, not a primary clickable target, but acts as background structure
+
+      // --- 3. MITOCHONDRIA (Interactive) ---
+      const mitoGroup = new THREE.Group();
+      // Outer membrane (bean shaped)
+      const outerGeo = organicSphere(4, 3, 0.05, 0.3); outerGeo.scale(1, 2.5, 1);
+      mitoGroup.add(new THREE.Mesh(outerGeo, new THREE.MeshPhongMaterial({ color: 0x10b981, emissive: 0x047857, emissiveIntensity: 0.5, transparent: true, opacity: 0.4, side: THREE.DoubleSide, shininess: 50 })));
+      // Inner membrane & Cristae (wavy folds)
+      for (let i = 0; i < 12; i++) {
+        const pts = [];
+        for (let j = 0; j <= 20; j++) {
+          const t = j / 20;
+          const y = (t - 0.5) * 15;
+          const waveX = Math.sin(t * Math.PI * 5 + i * 1.5) * 2.5;
+          const waveZ = Math.cos(t * Math.PI * 4 + i * 1.5) * 2.5;
+          pts.push(new THREE.Vector3(waveX, y, waveZ));
+        }
+        const curve = new THREE.CatmullRomCurve3(pts);
+        mitoGroup.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 60, 0.1, 6, false), new THREE.MeshBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.9 })));
+      }
+      // Matrix dots
+      for (let i = 0; i < 40; i++) {
+        const dot = new THREE.Mesh(new THREE.SphereGeometry(0.1, 6, 6), new THREE.MeshBasicMaterial({ color: 0x6ee7b7 }));
+        dot.position.set((Math.random()-0.5)*4, (Math.random()-0.5)*14, (Math.random()-0.5)*4);
+        mitoGroup.add(dot);
+      }
+      mitoGroup.position.set(-30, 20, -15); mitoGroup.rotation.set(0.4, 0.6, 0.2); scene.add(mitoGroup);
+      organelles.mitochondria = { group: mitoGroup, focus: new THREE.Vector3(-30, 30, 25) };
+
+      // --- 4. GOLGI APPARATUS (Interactive) ---
+      const golgiGroup = new THREE.Group();
+      const gMat = new THREE.MeshPhongMaterial({ color: 0xf59e0b, emissive: 0xb45309, emissiveIntensity: 0.6, side: THREE.DoubleSide, transparent: true, opacity: 0.8, shininess: 60 });
+      // Stacked, curved cisternae
+      for (let i = 0; i < 6; i++) {
+        const radius = 6 + i * 0.8;
+        const sac = new THREE.Mesh(new THREE.TorusGeometry(radius, 0.8, 12, 64, Math.PI * 1.2), gMat);
+        sac.rotation.x = Math.PI / 2 + i * 0.1;
+        sac.rotation.y = i * 0.15;
+        sac.position.y = i * 1.5;
+        sac.scale.set(1, 1, 0.4);
+        golgiGroup.add(sac);
+      }
+      // Vesicles budding off
+      for(let i=0; i<40; i++) {
+        const ves = new THREE.Mesh(new THREE.SphereGeometry(0.3, 12, 12), new THREE.MeshPhongMaterial({ color: 0xfbbf24, emissive: 0xf59e0b, emissiveIntensity: 0.8 }));
+        const angle = Math.random() * Math.PI * 2;
+        const rad = 8 + Math.random() * 4;
+        ves.position.set(Math.cos(angle) * rad, Math.random() * 10, Math.sin(angle) * rad);
+        golgiGroup.add(ves);
+      }
+      golgiGroup.position.set(30, 20, -15); scene.add(golgiGroup);
+      organelles.golgi = { group: golgiGroup, focus: new THREE.Vector3(30, 25, 25) };
+
+      // --- 5. LYSOSOME (Interactive) ---
+      const lysoGroup = new THREE.Group();
+      const lMat = new THREE.MeshPhongMaterial({ color: 0xd946ef, emissive: 0x86198f, emissiveIntensity: 0.8, transparent: true, opacity: 0.8, shininess: 100 });
+      // Bumpy sphere
+      const lysoMain = new THREE.Mesh(organicSphere(5, 3, 0.1, 0.4), lMat);
+      lysoGroup.add(lysoMain);
+      // Enzymes inside
+      const eMat = new THREE.MeshBasicMaterial({ color: 0xfdf4ff });
+      for (let i = 0; i < 50; i++) {
+        const e = new THREE.Mesh(new THREE.SphereGeometry(0.2, 6, 6), eMat);
+        e.position.set((Math.random()-0.5)*8, (Math.random()-0.5)*8, (Math.random()-0.5)*8);
+        const len = Math.sqrt(e.position.x**2 + e.position.y**2 + e.position.z**2); 
+        if (len > 4.5) e.position.multiplyScalar(4.5/len); 
+        lysoGroup.add(e);
+      }
+      lysoGroup.position.set(-35, -20, 10); scene.add(lysoGroup);
+      organelles.lysosome = { group: lysoGroup, focus: new THREE.Vector3(-35, -20, 35) };
+
+      // --- 6. CYTOSKELETON (Interactive) ---
+      const cytoGroup = new THREE.Group();
+      // Microtubules (thick, straight-ish lines originating near nucleus)
+      for (let i = 0; i < 40; i++) {
+        const start = new THREE.Vector3((Math.random()-0.5)*20, (Math.random()-0.5)*20, (Math.random()-0.5)*20);
+        const end = new THREE.Vector3((Math.random()-0.5)*110, (Math.random()-0.5)*110, (Math.random()-0.5)*110);
+        const mid = start.clone().add(end).multiplyScalar(0.5); 
+        mid.x += (Math.random()-0.5)*30;
+        const curve = new THREE.CatmullRomCurve3([start, mid, end]);
+        cytoGroup.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 40, 0.2, 6, false), new THREE.MeshBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.5 })));
+      }
+      // Actin filaments (thin, wavy)
+      for (let i = 0; i < 60; i++) {
+        const start = new THREE.Vector3((Math.random()-0.5)*100, (Math.random()-0.5)*100, (Math.random()-0.5)*100);
+        const end = new THREE.Vector3((Math.random()-0.5)*100, (Math.random()-0.5)*100, (Math.random()-0.5)*100);
+        const mid1 = start.clone().lerp(end, 0.33); mid1.x += (Math.random()-0.5)*20;
+        const mid2 = start.clone().lerp(end, 0.66); mid2.y += (Math.random()-0.5)*20;
+        const curve = new THREE.CatmullRomCurve3([start, mid1, mid2, end]);
+        cytoGroup.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 30, 0.05, 4, false), new THREE.MeshBasicMaterial({ color: 0xa78bfa, transparent: true, opacity: 0.4 })));
+      }
+      scene.add(cytoGroup);
+      organelles.cytoskeleton = { group: cytoGroup, focus: new THREE.Vector3(0, 0, 95) };
+
+      // --- 7. RIBOSOMES / ROUGH ER TARGET (Interactive) ---
+      // We make a distinct Rough ER patch for the user to click
+      const riboGroup = new THREE.Group();
+      const rErMat = new THREE.MeshPhongMaterial({ color: 0xbe185d, emissive: 0x831843, emissiveIntensity: 0.4, side: THREE.DoubleSide, transparent: true, opacity: 0.7, shininess: 30 });
+      for (let s = 0; s < 5; s++) {
+        const pts = [];
+        for(let j=0; j<10; j++) { pts.push(new THREE.Vector3(Math.sin(j)*10, s*4 - 8, Math.cos(j)*10)); }
+        const curve = new THREE.CatmullRomCurve3(pts);
+        const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 40, 1.2, 4, false), rErMat);
+        tube.scale.set(1, 0.3, 1);
+        riboGroup.add(tube);
+      }
+      const rMat = new THREE.MeshPhongMaterial({ color: 0xf472b6, emissive: 0xdb2777, emissiveIntensity: 1 });
+      for (let i = 0; i < 150; i++) { 
+        const r = new THREE.Mesh(new THREE.SphereGeometry(0.2, 6, 6), rMat); 
+        r.position.set((Math.random()-0.5)*20, (Math.random()-0.5)*20, (Math.random()-0.5)*15); 
+        riboGroup.add(r); 
+      }
+      riboGroup.position.set(15, -30, 20); scene.add(riboGroup);
+      organelles.ribosomes = { group: riboGroup, focus: new THREE.Vector3(15, -30, 40) };
+
+      // --- AMBIENT ORGANELLES (Non-clickable, textbook) ---
+      
+      // Peroxisomes (Small, with crystalline cores)
+      for(let i=0; i<20; i++) {
+        const per = new THREE.Group();
+        per.add(new THREE.Mesh(new THREE.SphereGeometry(1, 16, 16), new THREE.MeshPhongMaterial({ color: 0xf97316, emissive: 0x9a3412, emissiveIntensity: 0.5, transparent: true, opacity: 0.8 })));
+        const core = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.4, 0.4), new THREE.MeshBasicMaterial({ color: 0xfef08a }));
+        per.add(core);
         per.position.set((Math.random()-0.5)*80, (Math.random()-0.5)*80, (Math.random()-0.5)*80);
-        perGroup.add(per);
+        scene.add(per);
       }
-      scene.add(perGroup);
-      ambientOrganelles.push({ group: perGroup, speed: 0.05 });
 
-      // 9. Vacuoles - large translucent spheres
-      const vacGroup = new THREE.Group();
-      for(let i=0; i<4; i++) {
-        const vac = new THREE.Mesh(new THREE.SphereGeometry(6 + Math.random()*4, 32, 32), new THREE.MeshPhongMaterial({ color: 0x475569, transparent: true, opacity: 0.15, shininess: 100, side: THREE.DoubleSide }));
-        vac.position.set((Math.random()-0.5)*60, (Math.random()-0.5)*60, (Math.random()-0.5)*60);
-        vacGroup.add(vac);
+      // Vacuoles (Large, transparent, refractive)
+      for(let i=0; i<5; i++) {
+        const vac = new THREE.Mesh(new THREE.SphereGeometry(8 + Math.random()*5, 32, 32), new THREE.MeshPhysicalMaterial({ color: 0x475569, transparent: true, opacity: 0.1, transmission: 0.9, roughness: 0.1, ior: 1.5 }));
+        vac.position.set((Math.random()-0.5)*80, (Math.random()-0.5)*80, (Math.random()-0.5)*80);
+        scene.add(vac);
       }
-      scene.add(vacGroup);
-      ambientOrganelles.push({ group: vacGroup, speed: 0.01 });
 
-      // 10. Centrioles - two perpendicular cylinders
+      // Centrioles (Textbook structure: 9 triplets of microtubules)
       const cenGroup = new THREE.Group();
       const cenMat = new THREE.MeshPhongMaterial({ color: 0x94a3b8, shininess: 100 });
-      for(let i=0; i<9; i++) { // 9 triplets
+      for(let i=0; i<9; i++) {
         const triplet = new THREE.Group();
         for(let j=0; j<3; j++) {
-          const tub = new THREE.Mesh(new THREE.CylinderGeometry(0.15, 0.15, 4, 8), cenMat);
+          const tub = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 5, 8), cenMat);
           tub.position.set(Math.cos(j*Math.PI*2/3)*0.8, 0, Math.sin(j*Math.PI*2/3)*0.8);
           triplet.add(tub);
         }
+        triplet.position.set(Math.cos(i*Math.PI*2/9)*1.5, 0, Math.sin(i*Math.PI*2/9)*1.5);
         cenGroup.add(triplet);
       }
       const cen2 = cenGroup.clone();
       cen2.rotation.z = Math.PI/2;
-      cen2.position.y = 2.5;
+      cen2.position.set(2.5, 0, 0);
       cenGroup.add(cen2);
-      cenGroup.position.set(-30, 25, -20);
+      cenGroup.position.set(40, -30, -30);
       scene.add(cenGroup);
-      ambientOrganelles.push({ group: cenGroup, speed: 0.1 });
 
-      // 11. Secretory Vesicles - yellow spheres near Golgi
-      const secGroup = new THREE.Group();
-      for(let i=0; i<10; i++) {
-        const sec = new THREE.Mesh(new THREE.SphereGeometry(0.6, 12, 12), new THREE.MeshPhongMaterial({ color: 0xfde047, emissive: 0xca8a04, emissiveIntensity: 0.5 }));
-        sec.position.set(24 + (Math.random()-0.5)*15, 16 + (Math.random()-0.5)*15, -10 + (Math.random()-0.5)*15);
-        secGroup.add(sec);
+      // Free Ribosomes (Tiny dots scattered everywhere)
+      const freeRiboGeo = new THREE.SphereGeometry(0.15, 6, 6);
+      const freeRiboMat = new THREE.MeshBasicMaterial({ color: 0xe879f9, transparent: true, opacity: 0.6 });
+      const freeRibos = new THREE.InstancedMesh(freeRiboGeo, freeRiboMat, 500);
+      const dummy = new THREE.Object3D();
+      for(let i=0; i<500; i++) {
+        dummy.position.set((Math.random()-0.5)*110, (Math.random()-0.5)*110, (Math.random()-0.5)*110);
+        dummy.updateMatrix();
+        freeRibos.setMatrixAt(i, dummy.matrix);
       }
-      scene.add(secGroup);
-      ambientOrganelles.push({ group: secGroup, speed: 0.08 });
-
-      // 12. Autophagosomes - double membrane spheres
-      const autoGroup = new THREE.Group();
-      for(let i=0; i<6; i++) {
-        const auto = new THREE.Group();
-        auto.add(new THREE.Mesh(new THREE.SphereGeometry(1.5, 16, 16), new THREE.MeshBasicMaterial({ color: 0x14532d, wireframe: true, transparent: true, opacity: 0.6 })));
-        auto.add(new THREE.Mesh(new THREE.SphereGeometry(1.2, 16, 16), new THREE.MeshBasicMaterial({ color: 0x22c55e, wireframe: true, transparent: true, opacity: 0.4 })));
-        auto.position.set((Math.random()-0.5)*70, (Math.random()-0.5)*70, (Math.random()-0.5)*70);
-        autoGroup.add(auto);
-      }
-      scene.add(autoGroup);
-      ambientOrganelles.push({ group: autoGroup, speed: 0.04 });
-
-      // 13. Free Ribosomes - tiny dots scattered
-      const freeRiboGroup = new THREE.Group();
-      const rGeo = new THREE.SphereGeometry(0.12, 6, 6);
-      const rMat = new THREE.MeshBasicMaterial({ color: 0xe879f9 });
-      for(let i=0; i<200; i++) {
-        const r = new THREE.Mesh(rGeo, rMat);
-        r.position.set((Math.random()-0.5)*100, (Math.random()-0.5)*100, (Math.random()-0.5)*100);
-        freeRiboGroup.add(r);
-      }
-      scene.add(freeRiboGroup);
-      ambientOrganelles.push({ group: freeRiboGroup, speed: 0.03 });
+      scene.add(freeRibos);
     }
 
-    function buildCell() {
-      const memGeo = organicSphere(55, 3, 0.03, 0.03);
-      membrane = new THREE.Mesh(memGeo, new THREE.MeshPhongMaterial({ color: 0x1e3a8a, emissive: 0x1e40af, emissiveIntensity: 0.15, transparent: true, opacity: 0.08, side: THREE.BackSide, shininess: 30 }));
-      scene.add(membrane);
-      scene.add(new THREE.Mesh(new THREE.IcosahedronGeometry(55, 2), new THREE.MeshBasicMaterial({ color: 0x1e40af, wireframe: true, transparent: true, opacity: 0.06 })));
-
-      const pGeo = new THREE.BufferGeometry();
-      const pPos = new Float32Array(900 * 3);
-      const pCol = new Float32Array(900 * 3);
-      const c = new THREE.Color();
-      for (let i = 0; i < 900; i++) {
-        const r = 52 * Math.cbrt(Math.random()), t = Math.random() * Math.PI * 2, p = Math.acos(2*Math.random() - 1);
-        pPos[i*3] = r * Math.sin(p) * Math.cos(t); pPos[i*3+1] = r * Math.sin(p) * Math.sin(t); pPos[i*3+2] = r * Math.cos(p);
-        c.setHSL(0.5 + Math.random()*0.25, 0.7, 0.55); pCol[i*3] = c.r; pCol[i*3+1] = c.g; pCol[i*3+2] = c.b;
-      }
-      pGeo.setAttribute('position', new THREE.BufferAttribute(pPos, 3));
-      pGeo.setAttribute('color', new THREE.BufferAttribute(pCol, 3));
-      particles = new THREE.Points(pGeo, new THREE.PointsMaterial({ size: 0.55, vertexColors: true, transparent: true, opacity: 0.55, blending: THREE.AdditiveBlending, depthWrite: false }));
-      scene.add(particles);
-
-      // 1. NUCLEUS
-      const nucGroup = new THREE.Group();
-      nucGroup.add(new THREE.Mesh(organicSphere(12, 4, 0.03, 0.15), new THREE.MeshPhongMaterial({ color: 0x0ea5e9, emissive: 0x0284c7, emissiveIntensity: 0.5, transparent: true, opacity: 0.25, side: THREE.DoubleSide })));
-      nucGroup.add(new THREE.Mesh(new THREE.SphereGeometry(11.4, 40, 40), new THREE.MeshBasicMaterial({ color: 0x0891b2, transparent: true, opacity: 0.15, side: THREE.DoubleSide })));
-      for (let i = 0; i < 80; i++) {
-        const phi = Math.acos(2 * Math.random() - 1), theta = Math.random() * Math.PI * 2;
-        const x = 12 * Math.sin(phi) * Math.cos(theta), y = 12 * Math.sin(phi) * Math.sin(theta), z = 12 * Math.cos(phi);
-        const pore = new THREE.Mesh(new THREE.TorusGeometry(0.35, 0.09, 6, 12), new THREE.MeshBasicMaterial({ color: 0x67e8f9, transparent: true, opacity: 0.9 }));
-        pore.position.set(x, y, z); pore.lookAt(0, 0, 0); nucGroup.add(pore);
-      }
-      for (let i = 0; i < 15; i++) {
-        const pts = []; let x=0, y=0, z=0;
-        for (let j = 0; j < 25; j++) {
-          x += (Math.random()-0.5)*2.4; y += (Math.random()-0.5)*2.4; z += (Math.random()-0.5)*2.4;
-          const len = Math.sqrt(x*x+y*y+z*z); if (len > 9) { x*=9/len; y*=9/len; z*=9/len; }
-          pts.push(new THREE.Vector3(x,y,z));
-        }
-        nucGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 80, 0.1, 6, false), new THREE.MeshBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.7 })));
-      }
-      const nucleolus = new THREE.Mesh(organicSphere(3.5, 2, 0.15, 0.4), new THREE.MeshPhongMaterial({ color: 0x0369a1, emissive: 0x0c4a6e, emissiveIntensity: 0.8, transparent: true, opacity: 0.85, shininess: 60 }));
-      nucleolus.position.set(2, -1, 1); nucGroup.add(nucleolus);
-      scene.add(nucGroup);
-      organelles.nucleus = { group: nucGroup, focus: new THREE.Vector3(0, 4, 30) };
-
-      // 2. MITOCHONDRIA
-      const mitoGroup = new THREE.Group();
-      const outerGeo = organicSphere(3, 3, 0.08, 0.4); outerGeo.scale(1, 2, 1);
-      mitoGroup.add(new THREE.Mesh(outerGeo, new THREE.MeshPhongMaterial({ color: 0x10b981, emissive: 0x047857, emissiveIntensity: 0.4, transparent: true, opacity: 0.35, side: THREE.DoubleSide, shininess: 50 })));
-      for (let i = 0; i < 8; i++) {
-        const pts = []; for (let j = 0; j <= 20; j++) { const t = j / 20; pts.push(new THREE.Vector3(Math.sin(t * Math.PI * 4 + i) * 2.2, (t - 0.5) * 10, Math.cos(t * Math.PI * 3 + i) * 2.2)); }
-        mitoGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 50, 0.08, 6, false), new THREE.MeshBasicMaterial({ color: 0x34d399, transparent: true, opacity: 0.85 })));
-      }
-      mitoGroup.position.set(-22, 14, -8); mitoGroup.rotation.set(0.3, 0.8, 0.4); scene.add(mitoGroup);
-      organelles.mitochondria = { group: mitoGroup, focus: new THREE.Vector3(-22, 22, 22) };
-
-      // 3. GOLGI
-      const golgiGroup = new THREE.Group();
-      const gMat = new THREE.MeshPhongMaterial({ color: 0xf59e0b, emissive: 0xb45309, emissiveIntensity: 0.4, side: THREE.DoubleSide, transparent: true, opacity: 0.75, shininess: 40 });
-      for (let i = 0; i < 8; i++) {
-        const sac = new THREE.Mesh(new THREE.TorusGeometry(3.5 + i * 0.5, 0.55, 10, 60, Math.PI * 1.4), gMat);
-        sac.rotation.x = Math.PI / 2 + i * 0.08; sac.rotation.y = i * 0.15; sac.position.y = i * 1.1; sac.scale.set(1, 1, 0.35); golgiGroup.add(sac);
-      }
-      golgiGroup.position.set(24, 16, -10); scene.add(golgiGroup);
-      organelles.golgi = { group: golgiGroup, focus: new THREE.Vector3(24, 22, 20) };
-
-      // 4. RIBOSOMES / ROUGH ER
-      const riboGroup = new THREE.Group();
-      const erMat = new THREE.MeshPhongMaterial({ color: 0xbe185d, emissive: 0x831843, emissiveIntensity: 0.3, side: THREE.DoubleSide, transparent: true, opacity: 0.6, shininess: 30 });
-      for (let s = 0; s < 4; s++) {
-        const sheetGeo = new THREE.PlaneGeometry(10, 6, 20, 12); const pos = sheetGeo.attributes.position;
-        for (let i = 0; i < pos.count; i++) pos.setZ(i, Math.sin(pos.getX(i) * 0.8 + s) * 0.5);
-        sheetGeo.computeVertexNormals();
-        const sheet = new THREE.Mesh(sheetGeo, erMat); sheet.rotation.y = s * 0.6; sheet.position.set(Math.cos(s * 1.2) * 4, s * 1.5, Math.sin(s * 1.2) * 4); riboGroup.add(sheet);
-      }
-      const rMat = new THREE.MeshPhongMaterial({ color: 0xf472b6, emissive: 0xdb2777, emissiveIntensity: 1 });
-      for (let i = 0; i < 100; i++) { const r = new THREE.Mesh(new THREE.SphereGeometry(0.15, 6, 6), rMat); r.position.set((Math.random()-0.5)*14, (Math.random()-0.5)*10, (Math.random()-0.5)*8); riboGroup.add(r); }
-      riboGroup.position.set(10, -20, 15); scene.add(riboGroup);
-      organelles.ribosomes = { group: riboGroup, focus: new THREE.Vector3(10, -20, 35) };
-
-      // 5. LYSOSOME
-      const lysoGroup = new THREE.Group();
-      const lMat = new THREE.MeshPhongMaterial({ color: 0xd946ef, emissive: 0x86198f, emissiveIntensity: 0.6, transparent: true, opacity: 0.7, shininess: 100 });
-      lysoGroup.add(new THREE.Mesh(organicSphere(4, 3, 0.08, 0.3), lMat));
-      const eMat = new THREE.MeshBasicMaterial({ color: 0xfdf4ff });
-      for (let i = 0; i < 40; i++) {
-        const e = new THREE.Mesh(new THREE.SphereGeometry(0.15, 6, 6), eMat);
-        e.position.set((Math.random()-0.5)*6, (Math.random()-0.5)*6, (Math.random()-0.5)*6);
-        const len = Math.sqrt(e.position.x**2 + e.position.y**2 + e.position.z**2); if (len > 3.5) e.position.multiplyScalar(3.5/len); lysoGroup.add(e);
-      }
-      lysoGroup.position.set(-25, -15, 10); scene.add(lysoGroup);
-      organelles.lysosome = { group: lysoGroup, focus: new THREE.Vector3(-25, -15, 30) };
-
-      // 6. CYTOSKELETON
-      const cytoGroup = new THREE.Group();
-      for (let i = 0; i < 12; i++) {
-        const start = new THREE.Vector3((Math.random()-0.5)*90, (Math.random()-0.5)*90, (Math.random()-0.5)*90);
-        const end = new THREE.Vector3((Math.random()-0.5)*90, (Math.random()-0.5)*90, (Math.random()-0.5)*90);
-        const mid = start.clone().add(end).multiplyScalar(0.5); mid.x += (Math.random()-0.5)*25;
-        cytoGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([start, mid, end]), 50, 0.15, 6, false), new THREE.MeshBasicMaterial({ color: 0x8b5cf6, transparent: true, opacity: 0.6 })));
-      }
-      for (let i = 0; i < 20; i++) {
-        const start = new THREE.Vector3((Math.random()-0.5)*90, (Math.random()-0.5)*90, (Math.random()-0.5)*90);
-        const end = new THREE.Vector3((Math.random()-0.5)*90, (Math.random()-0.5)*90, (Math.random()-0.5)*90);
-        const mid = start.clone().add(end).multiplyScalar(0.5); mid.y += (Math.random()-0.5)*20;
-        cytoGroup.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([start, mid, end]), 40, 0.05, 4, false), new THREE.MeshBasicMaterial({ color: 0xa78bfa, transparent: true, opacity: 0.4 })));
-      }
-      scene.add(cytoGroup);
-      organelles.cytoskeleton = { group: cytoGroup, focus: new THREE.Vector3(0, 5, 85) };
-    }
-
-    let downPos = { x: 0, y: 0 };
+      let downPos = { x: 0, y: 0 };
     function setupEvents() {
       window.addEventListener('resize', () => { if(camera) { camera.aspect = innerWidth/innerHeight; camera.updateProjectionMatrix(); renderer.setSize(innerWidth, innerHeight); } });
       const canvas = renderer.domElement;
@@ -827,14 +895,14 @@
     function flyTo(key) {
       const org = organelles[key]; if (!org || transitioning) return;
       activeTarget = key; transitioning = true; controls.enabled = false;
-      tweenCamera(org.focus, org.group.position, 900, () => { transitioning = false; openModal(key); });
+      tweenCamera(org.focus, org.group.position, 1000, () => { transitioning = false; openModal(key); });
     }
 
     function resetView() {
       if (transitioning) return;
       activeTarget = null; transitioning = true; controls.enabled = false;
       closeModal(true);
-      tweenCamera(DEFAULT_POS, DEFAULT_LOOK, 900, () => { transitioning = false; });
+      tweenCamera(DEFAULT_POS, DEFAULT_LOOK, 1000, () => { transitioning = false; });
     }
 
     function tweenCamera(toPos, toLook, duration, onDone) {
@@ -865,14 +933,14 @@
       const modal = document.getElementById('hud-modal'); if (modal.classList.contains('hidden')) return;
       const card = document.getElementById('hud-card'); card.classList.remove('opacity-100', 'scale-100'); card.classList.add('opacity-0', 'scale-95');
       setTimeout(() => modal.classList.add('hidden'), 300);
-      if (!silent) { activeTarget = null; if (!transitioning) { transitioning = true; controls.enabled = false; tweenCamera(DEFAULT_POS, DEFAULT_LOOK, 900, () => { transitioning = false; }); } }
+      if (!silent) { activeTarget = null; if (!transitioning) { transitioning = true; controls.enabled = false; tweenCamera(DEFAULT_POS, DEFAULT_LOOK, 1000, () => { transitioning = false; }); } }
     }
 
     function updateTooltips() {
       for (const key in organelles) {
         const tip = document.getElementById('tip-' + key); if (!tip) continue;
         if (activeTarget) { tip.style.opacity = '0'; continue; }
-        const v = new THREE.Vector3(); organelles[key].group.getWorldPosition(v); v.y += 6; v.project(camera);
+        const v = new THREE.Vector3(); organelles[key].group.getWorldPosition(v); v.y += 8; v.project(camera);
         if (v.z > 1) { tip.style.opacity = '0'; continue; }
         tip.style.left = ((v.x * 0.5 + 0.5) * innerWidth) + 'px'; tip.style.top = ((-(v.y * 0.5) + 0.5) * innerHeight) + 'px'; tip.style.opacity = '1';
       }
@@ -883,19 +951,23 @@
       requestAnimationFrame(animate);
       const t = (now || 0) * 0.001;
       
-      // Interactive organelles
-      if (organelles.nucleus) { organelles.nucleus.group.rotation.y = t * 0.12; organelles.nucleus.group.scale.setScalar(1 + Math.sin(t * 1.4) * 0.015); }
-      if (organelles.mitochondria) organelles.mitochondria.group.rotation.y = t * 0.25;
+      // Smooth, organic movements
+      if (organelles.nucleus) { 
+        organelles.nucleus.group.rotation.y = t * 0.05; 
+        organelles.nucleus.group.scale.setScalar(1 + Math.sin(t * 1.2) * 0.01); 
+      }
+      if (organelles.mitochondria) organelles.mitochondria.group.rotation.y = t * 0.1;
       if (organelles.golgi) organelles.golgi.group.rotation.y = t * 0.15;
-      if (organelles.cytoskeleton) organelles.cytoskeleton.group.rotation.y = t * 0.05;
-      if (organelles.ribosomes) organelles.ribosomes.group.rotation.y = t * 0.15;
-      if (organelles.lysosome) { organelles.lysosome.group.rotation.y = t * 0.1; organelles.lysosome.group.rotation.x = t * 0.08; }
-      
-      // Ambient organelles
-      ambientOrganelles.forEach(item => { item.group.rotation.y = t * item.speed; item.group.rotation.x = t * item.speed * 0.5; });
+      if (organelles.cytoskeleton) organelles.cytoskeleton.group.rotation.y = t * 0.02;
+      if (organelles.ribosomes) organelles.ribosomes.group.rotation.y = t * 0.1;
+      if (organelles.lysosome) { organelles.lysosome.group.rotation.y = t * 0.08; organelles.lysosome.group.rotation.x = t * 0.05; }
 
-      if (particles) particles.rotation.y = t * 0.02; if (membrane) membrane.rotation.y = t * 0.01;
-      controls.update(); updateTooltips(); renderer.render(scene, camera);
+      if (particles) particles.rotation.y = t * 0.01; 
+      if (membrane) membrane.rotation.y = t * 0.005;
+      
+      controls.update(); 
+      updateTooltips(); 
+      renderer.render(scene, camera);
     }
   </script>
 </body>
