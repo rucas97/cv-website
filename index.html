@@ -519,86 +519,94 @@
     };
 </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-  <script>
-    let is3DActive = false;
-    function enterCell() {
-      document.getElementById('landing-page').style.opacity = '0';
-      document.getElementById('enter-cell-btn').style.display = 'none';
-      setTimeout(() => {
-        document.getElementById('landing-page').style.display = 'none';
-        document.getElementById('cell-3d-container').classList.add('active');
-        is3DActive = true;
-        if (!scene) init3D();
-      }, 800);
-    }
-    function exitCell() {
-      document.getElementById('cell-3d-container').classList.remove('active');
-      is3DActive = false;
-      setTimeout(() => {
-        document.getElementById('landing-page').style.display = 'block';
-        document.getElementById('enter-cell-btn').style.display = 'flex';
-        setTimeout(() => document.getElementById('landing-page').style.opacity = '1', 50);
-      }, 800);
-    }
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+  let is3DActive = false;
+  function enterCell() {
+    document.getElementById('landing-page').style.opacity = '0';
+    document.getElementById('enter-cell-btn').style.display = 'none';
+    setTimeout(() => {
+      document.getElementById('landing-page').style.display = 'none';
+      document.getElementById('cell-3d-container').classList.add('active');
+      is3DActive = true;
+      if (!scene) init3D();
+    }, 800);
+  }
+  function exitCell() {
+    document.getElementById('cell-3d-container').classList.remove('active');
+    is3DActive = false;
+    setTimeout(() => {
+      document.getElementById('landing-page').style.display = 'block';
+      document.getElementById('enter-cell-btn').style.display = 'flex';
+      setTimeout(() => document.getElementById('landing-page').style.opacity = '1', 50);
+    }, 800);
+  }
 
-    let scene, camera, renderer, controls, raycaster, mouse;
-    let organelles = {};
-    let membrane, particles;
-    let ambientOrganelles = [];
-    let hovered = null, activeTarget = null, transitioning = false;
-    let tweenHandle = null;
-    const DEFAULT_POS = new THREE.Vector3(0, 10, 65);
-    const DEFAULT_LOOK = new THREE.Vector3(0, 0, 0);
+  let scene, camera, renderer, controls, raycaster, mouse;
+  let organelles = {};
+  let membrane, particles;
+  let ambientOrganelles = [];
+  let hovered = null, activeTarget = null, transitioning = false;
+  let tweenHandle = null;
+  
+  // --- CHANGED HERE: Zoomed out to see the whole cell ---
+  const DEFAULT_POS = new THREE.Vector3(0, 15, 190); 
+  const DEFAULT_LOOK = new THREE.Vector3(0, 0, 0);
+  // ------------------------------------------------------
 
-    function noise(x, y, z) {
-      return (Math.sin(x*1.7)*Math.cos(y*1.3)*Math.sin(z*1.9)*0.5 + Math.sin(x*4.1)*Math.cos(y*3.7)*Math.sin(z*4.3)*0.3 + Math.sin(x*8.5)*Math.cos(y*7.1)*Math.sin(z*8.3)*0.15);
-    }
+  function noise(x, y, z) {
+    return (Math.sin(x*1.7)*Math.cos(y*1.3)*Math.sin(z*1.9)*0.5 + Math.sin(x*4.1)*Math.cos(y*3.7)*Math.sin(z*4.3)*0.3 + Math.sin(x*8.5)*Math.cos(y*7.1)*Math.sin(z*8.3)*0.15);
+  }
 
-    function organicSphere(radius, detail, amp, freq) {
-      const geo = new THREE.IcosahedronGeometry(radius, detail);
-      const pos = geo.attributes.position;
-      const v = new THREE.Vector3();
-      for (let i = 0; i < pos.count; i++) {
-        v.set(pos.getX(i), pos.getY(i), pos.getZ(i));
-        const n = noise(v.x*freq, v.y*freq, v.z*freq);
-        v.multiplyScalar(1 + n * amp);
-        pos.setXYZ(i, v.x, v.y, v.z);
-      }
-      geo.computeVertexNormals();
-      return geo;
+  function organicSphere(radius, detail, amp, freq) {
+    const geo = new THREE.IcosahedronGeometry(radius, detail);
+    const pos = geo.attributes.position;
+    const v = new THREE.Vector3();
+    for (let i = 0; i < pos.count; i++) {
+      v.set(pos.getX(i), pos.getY(i), pos.getZ(i));
+      const n = noise(v.x*freq, v.y*freq, v.z*freq);
+      v.multiplyScalar(1 + n * amp);
+      pos.setXYZ(i, v.x, v.y, v.z);
     }
+    geo.computeVertexNormals();
+    return geo;
+  }
 
-    function init3D() {
-      scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x030712, 0.005);
-      camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 2000);
-      camera.position.copy(DEFAULT_POS);
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-      renderer.setSize(innerWidth, innerHeight);
-      renderer.setClearColor(0x030712, 1);
-      renderer.domElement.style.touchAction = 'none';
-      document.getElementById('webgl-container').appendChild(renderer.domElement);
-      controls = new THREE.OrbitControls(camera, renderer.domElement);
-      controls.enableDamping = true;
-      controls.dampingFactor = 0.06;
-      controls.minDistance = 10;
-      controls.maxDistance = 150;
-      raycaster = new THREE.Raycaster();
-      mouse = new THREE.Vector2();
-      
-      // Enhanced Lighting for depth
-      scene.add(new THREE.AmbientLight(0x1a2540, 1.2));
-      const L1 = new THREE.PointLight(0x06b6d4, 2.5, 200); scene.add(L1);
-      const L2 = new THREE.PointLight(0x10b981, 2.0, 150); L2.position.set(-50, 40, 40); scene.add(L2);
-      const L3 = new THREE.PointLight(0x8b5cf6, 1.8, 150); L3.position.set(50, -40, -40); scene.add(L3);
-      const L4 = new THREE.PointLight(0xf59e0b, 1.5, 100); L4.position.set(30, 30, 30); scene.add(L4);
-      
-      buildCell();
-      setupEvents();
-      animate();
-    }
+  function init3D() {
+    scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x030712, 0.004);
+    camera = new THREE.PerspectiveCamera(55, innerWidth/innerHeight, 0.1, 2000);
+    camera.position.copy(DEFAULT_POS);
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setClearColor(0x030712, 1);
+    renderer.domElement.style.touchAction = 'none';
+    document.getElementById('webgl-container').appendChild(renderer.domElement);
+    
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.06;
+    controls.minDistance = 10;
+    
+    // --- CHANGED HERE: Allow zooming out further ---
+    controls.maxDistance = 300; 
+    // ------------------------------------------------
+    
+    raycaster = new THREE.Raycaster();
+    mouse = new THREE.Vector2();
+    
+    // Enhanced Lighting for depth
+    scene.add(new THREE.AmbientLight(0x1a2540, 1.2));
+    const L1 = new THREE.PointLight(0x06b6d4, 2.5, 200); scene.add(L1);
+    const L2 = new THREE.PointLight(0x10b981, 2.0, 150); L2.position.set(-50, 40, 40); scene.add(L2);
+    const L3 = new THREE.PointLight(0x8b5cf6, 1.8, 150); L3.position.set(50, -40, -40); scene.add(L3);
+    const L4 = new THREE.PointLight(0xf59e0b, 1.5, 100); L4.position.set(30, 30, 30); scene.add(L4);
+    
+    buildCell();
+    setupEvents();
+    animate();
+  }
 
     function buildCell() {
       // --- CELL MEMBRANE ---
